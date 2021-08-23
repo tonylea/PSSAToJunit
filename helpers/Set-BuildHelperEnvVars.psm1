@@ -1,8 +1,10 @@
 function Set-BuildHelperEnvVars {
-    param ()
+    param (
+        $Path
+    )
 
     $BuildHelperVars = Get-Item ENV:BH*
     if (!$BuildHelperVars) {
-        Set-BuildEnvironment
+        Set-BuildEnvironment -Path $Path
     }
 }
