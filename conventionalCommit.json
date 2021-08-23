@@ -37,6 +37,7 @@
   "scopes": {
     "privatefunc": {},
     "publicfunc": {},
-    "husky": {}
+    "husky": {},
+    "helpers": {}
   }
 }
