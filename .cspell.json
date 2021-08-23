@@ -15,8 +15,7 @@
         "pssa",
         "pssatojunit",
         "publicfunc",
-        "pwsh",
-        "to"
+        "pwsh"
     ],
     "ignoreWords": [
         "coenraads",
