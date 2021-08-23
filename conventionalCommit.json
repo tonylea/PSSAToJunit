@@ -1,0 +1,42 @@
+{
+  "types": {
+    "chore": {
+      "description": "Changes which aren't user-facing"
+    },
+    "ci": {
+      "description": "Changes to affect CI configuration files and scripts"
+    },
+    "docs": {
+      "description": "Changes which affect documentation"
+    },
+    "feat": {
+      "description": "Changes which introduce a new feature"
+    },
+    "fix": {
+      "description": "Changes which patch a bug"
+    },
+    "perf": {
+      "description": "Changes which improve performance"
+    },
+    "refactor": {
+      "description": "Changes which neither fix a bug nor add a feature"
+    },
+    "release": {
+      "description": "Used by the pipeline to bump a version"
+    },
+    "revert": {
+      "description": "Changes which revert a previous commit"
+    },
+    "style": {
+      "description": "Changes which don't affect code logic, such as white-spaces, formatting, missing semi-colons"
+    },
+    "test": {
+      "description": "Changes which add missing tests or correct existing tests"
+    }
+  },
+  "scopes": {
+    "privatefunc": {},
+    "publicfunc": {},
+    "husky": {}
+  }
+}

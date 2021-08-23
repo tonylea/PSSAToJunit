@@ -1,0 +1,30 @@
+{
+    "version": "0.1",
+    "ignorePaths": [
+        "package-lock.json"
+    ],
+    "words": [
+        "cli",
+        "commitlint",
+        "config",
+        "editorconfig",
+        "gitlens",
+        "husky",
+        "junit",
+        "privatefunc",
+        "pssa",
+        "pssatojunit",
+        "publicfunc",
+        "pwsh",
+        "to"
+    ],
+    "ignoreWords": [
+        "coenraads",
+        "davidanson",
+        "eamodio",
+        "mikestead",
+        "oderwat",
+        "pkief",
+        "remotehub"
+    ]
+}
