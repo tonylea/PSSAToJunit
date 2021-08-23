@@ -13,7 +13,9 @@
     # DotNetFrameworkVersion = ""
     # ClrVersion = ""
     # ProcessorArchitecture = ""
-    RequiredModules      = @("PSScriptAnalyzer")
+    RequiredModules      = @(
+        @{ModuleName="PSScriptAnalyzer"; ModuleVersion="1.19.1"}
+    )
     # RequiredAssemblies = @()
     # ScriptsToProcess = @()
     # TypesToProcess = @()
@@ -28,7 +30,7 @@
     # FileList = @()
     PrivateData          = @{
         PSData = @{
-            Tags       = @("pssa", "junit")
+            Tags       = @("PSScriptAnalyzer", "PSSA", "junit")
             LicenseUri = "https://mit-license.org"
             ProjectUri = "https://github.com/tonylea/PSSAToJunit"
             # IconUri = ""
