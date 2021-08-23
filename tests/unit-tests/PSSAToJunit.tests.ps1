@@ -1,11 +1,11 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'Suppress false positives in BeforeAll scriptblock')]
 param()
 
-$BuildVarModulePath = Join-Path -Path ($PSScriptRoot -replace "tests.+") -ChildPath "Helpers" -AdditionalChildPath "Set-BuildHelperEnvVars.psm1"
+$BuildVarModulePath = Join-Path -Path ($PSScriptRoot -replace "tests.+") -ChildPath "Helpers" -AdditionalChildPath "Set-TestHelperEnvVars.psm1"
 Import-Module -Name $BuildVarModulePath
-Set-BuildHelperEnvVars -Path "$($PSScriptRoot -replace "tests.+")"
+Set-TestHelperEnvVars -Path $PSScriptRoot
 
-Describe "$ModuleName Manifest" {
+Describe "$($ENV:BHProjectName) Manifest" {
     BeforeAll {
         $ManifestPath = $ENV:BHPSModuleManifest
         $ModuleName = $ENV:BHProjectName
@@ -15,7 +15,6 @@ Describe "$ModuleName Manifest" {
     }
 
     It "Has a valid manifest" {
-        Write-Host "Manifest Path: $ManifestPath"
         {
             $null = Test-ModuleManifest -Path $ManifestPath -ErrorAction Stop -WarningAction SilentlyContinue
         } | Should -Not -Throw
