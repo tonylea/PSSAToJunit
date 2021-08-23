@@ -1,9 +1,12 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'Suppress false positives in BeforeAll scriptblock')]
 param()
 
+$BuildVarModulePath = Join-Path -Path ($PSScriptRoot -replace "tests.+") -ChildPath "Helpers" -AdditionalChildPath "Set-BuildHelperEnvVars.psm1"
+Import-Module -Name $BuildVarModulePath
+Set-BuildHelperEnvVars -Path "$($PSScriptRoot -replace "tests.+")"
+
 Describe "$ModuleName Manifest" {
     BeforeAll {
-        Set-BuildHelperEnvVars
         $ManifestPath = $ENV:BHPSModuleManifest
         $ModuleName = $ENV:BHProjectName
         $ModulePath = $ENV:BHModulePath
