@@ -38,6 +38,7 @@
     "privatefunc": {},
     "publicfunc": {},
     "husky": {},
-    "helpers": {}
+    "helpers": {},
+    "linting": {}
   }
 }
