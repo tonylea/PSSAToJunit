@@ -9,5 +9,6 @@ function Set-TestHelperEnvVars {
     }
 
     $ENV:THFunctionName = (Get-Item -Path $Path).BaseName -replace "\.tests"
+    $ENV:THFunctionPath = $Path -replace ".+unit-tests", $ENV:BHPSModulePath -replace "\.tests"
 
 }
