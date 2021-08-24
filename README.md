@@ -1,5 +1,5 @@
 # PSSAToJunit: A module to convert PSScriptAnalyzer reports to jUnit
 
-[![GitHub Super-Linter](https://github.com/tonylea/PSSAToJunit/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![Mega-Linter](https://github.com/tonylea/PSSAToJunit/workflows/Mega-Linter/badge.svg?branch=main)](https://github.com/tonylea/PSSAToJunit/actions?query=workflow%3AMega-Linter+branch%3Amain)
 
 A simple PowerShell module to convert PSScriptAnalyzer results to jUnit
