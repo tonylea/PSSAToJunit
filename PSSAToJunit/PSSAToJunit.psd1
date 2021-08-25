@@ -21,7 +21,7 @@
     # TypesToProcess = @()
     # FormatsToProcess = @()
     # NestedModules = @()
-    FunctionsToExport    = @()
+    FunctionsToExport    = @("Convert-PssaJunit")
     CmdletsToExport      = @()
     VariablesToExport    = @()
     AliasesToExport      = @()
