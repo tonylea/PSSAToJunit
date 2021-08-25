@@ -17,7 +17,7 @@ function Convert-PssaJunit {
 
         [Parameter(Mandatory)]
         [System.IO.FileInfo]
-        $OutPath
+        $OutputFolder
     )
 
     begin {
@@ -30,9 +30,11 @@ function Convert-PssaJunit {
         } else {
             $JunitTests = Get-FailingTestsReport -IncludeRule $ScriptAnalyzerRules -TestName $TestName -Result $Result
         }
+
+        Write-Host "Linting error"
     }
 
     end {
-        $JunitTests.Save($OutPath)
+        $JunitTests.Save($OutputFolder)
     }
 }
