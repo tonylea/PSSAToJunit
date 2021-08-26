@@ -41,7 +41,7 @@ function Get-FailingTestsReport {
                 $Message = $R.Message
                 $ScriptName = $R.ScriptName
                 $Line = $R.Line
-                $Failure.InnerText = "$Message. File: $($ScriptName):$Line"
+                $Failure.InnerText = "$($Message)&#xA$($ScriptName):$Line"
                 $TestCase.AppendChild($Failure) | Out-Null
 
                 $Xml.testsuites.testsuite.AppendChild($TestCase) | Out-Null
