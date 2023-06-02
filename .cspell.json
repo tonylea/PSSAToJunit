@@ -4,9 +4,11 @@
         "package-lock.json"
     ],
     "words": [
+        "chsh",
         "cli",
         "commitlint",
         "config",
+        "devcontainers",
         "editorconfig",
         "gitlens",
         "husky",
