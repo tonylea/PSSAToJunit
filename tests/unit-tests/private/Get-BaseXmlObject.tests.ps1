@@ -16,7 +16,7 @@ Describe "$ENV:THFunctionName" {
 
         $FuncDependancies = @{
             Private = @("Get-TemplateXml")
-            Public = @()
+            Public  = @()
             Classes = @()
         }
         foreach ($Scope in $FuncDependancies.Keys) {
@@ -32,7 +32,7 @@ Describe "$ENV:THFunctionName" {
         It "Does not contain untested parameters" {
             Write-Host $FunctionName
             $parameterInfo = (Get-Command $FunctionName).Parameters
-            $parameterInfo.Count - 11| Should -Be 2
+            $parameterInfo.Count - 11 | Should -Be 2
         }
 
         It "Has a mandatory string 'TestCount' parameter" {
@@ -52,7 +52,7 @@ Describe "$ENV:THFunctionName" {
 
     Context "Core Functionality" {
         BeforeEach {
-            Mock Get-TemplateXml {return [System.Xml.XmlDocument]@"
+            Mock Get-TemplateXml { return [System.Xml.XmlDocument]@"
                 <?xml version="1.0" encoding="utf-8" standalone="no"?>
                 <testsuites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="junit_schema_4.xsd" name="PSScriptAnalyzer" tests="0" errors="0" failures="0" disabled="0" time="0">
                     <testsuite name="" tests="0" errors="0" failures="0" hostname="" id="0" skipped="0" disabled="0" package="" time="0">

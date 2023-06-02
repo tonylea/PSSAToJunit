@@ -16,7 +16,7 @@ Describe "$ENV:THFunctionName" {
 
         $FuncDependancies = @{
             Private = @()
-            Public = @()
+            Public  = @()
             Classes = @()
         }
         foreach ($Scope in $FuncDependancies.Keys) {
@@ -32,7 +32,7 @@ Describe "$ENV:THFunctionName" {
         It "Does not contain untested parameters" {
             Write-Host $FunctionName
             $parameterInfo = (Get-Command $FunctionName).Parameters
-            $parameterInfo.Count - 11| Should -Be 0
+            $parameterInfo.Count - 11 | Should -Be 0
         }
     }
 
@@ -50,11 +50,11 @@ Describe "$ENV:THFunctionName" {
         }
 
         It "Has 'testsuite' element" {
-            $Xml.testsuites.testsuite| Should -Not -BeNullOrEmpty
+            $Xml.testsuites.testsuite | Should -Not -BeNullOrEmpty
         }
 
         It "Has 'properties' element" {
-            $Xml.testsuites.testsuite.properties| Should -Not -BeNullOrEmpty
+            $Xml.testsuites.testsuite.properties | Should -Not -BeNullOrEmpty
         }
     }
 }

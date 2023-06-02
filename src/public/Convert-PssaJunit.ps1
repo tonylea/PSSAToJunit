@@ -8,7 +8,7 @@ function Convert-PssaJunit {
         [Parameter(Mandatory)]
         [AllowNull()]
         [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]
-        $Result,
+        $PSScriptAnalyzerResult,
 
         [Parameter(Mandatory)]
         [ValidateSet("Information", "Warning", "Error")]
@@ -20,21 +20,16 @@ function Convert-PssaJunit {
         $OutputFolder
     )
 
-    begin {
-        $ScriptAnalyzerRules = Get-ScriptAnalyzerRule -Severity $Severity
+    $ScriptAnalyzerRules = Get-ScriptAnalyzerRule -Severity $Severity
+
+    if (!$PSScriptAnalyzerResult) {
+        $JunitTests = Get-PassingTestsReport -IncludeRule $ScriptAnalyzerRules -TestName $TestName
+    }
+    else {
+        $JunitTests = Get-FailingTestsReport -IncludeRule $ScriptAnalyzerRules -TestName $TestName -Result $PSScriptAnalyzerResult
     }
 
-    process {
-        if (!$Result) {
-            $JunitTests = Get-PassingTestsReport -IncludeRule $ScriptAnalyzerRules -TestName $TestName
-        } else {
-            $JunitTests = Get-FailingTestsReport -IncludeRule $ScriptAnalyzerRules -TestName $TestName -Result $Result
-        }
+    Write-Host "Linting error"
 
-        Write-Host "Linting error"
-    }
-
-    end {
-        $JunitTests.Save($OutputFolder)
-    }
+    $JunitTests.Save($OutputFolder)
 }

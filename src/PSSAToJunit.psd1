@@ -14,7 +14,7 @@
     # ClrVersion = ""
     # ProcessorArchitecture = ""
     RequiredModules      = @(
-        @{ModuleName="PSScriptAnalyzer"; ModuleVersion="1.19.1"}
+        @{ ModuleName = "PSScriptAnalyzer"; ModuleVersion = "1.19.1" }
     )
     # RequiredAssemblies = @()
     # ScriptsToProcess = @()

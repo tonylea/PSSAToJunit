@@ -244,9 +244,9 @@ fi
 # Set the default git editor if not already set
 if [ -z "$(git config --get core.editor)" ] && [ -z "${GIT_EDITOR}" ]; then
     if  [ "${TERM_PROGRAM}" = "vscode" ]; then
-        if [[ -n $(command -v code-insiders) &&  -z $(command -v code) ]]; then 
+        if [[ -n $(command -v code-insiders) &&  -z $(command -v code) ]]; then
             export GIT_EDITOR="code-insiders --wait"
-        else 
+        else
             export GIT_EDITOR="code --wait"
         fi
     fi
@@ -323,7 +323,7 @@ codespaces_zsh="$(
 # Codespaces zsh prompt theme
 __zsh_prompt() {
     local prompt_username
-    if [ ! -z "${GITHUB_USER}" ]; then 
+    if [ ! -z "${GITHUB_USER}" ]; then
         prompt_username="@${GITHUB_USER}"
     else
         prompt_username="%n"
@@ -346,7 +346,7 @@ EOF
 omb_readme="$(
     cat \
         <<'EOF'
-"Oh My Bash!" has been removed from this image in favor of a simple shell prompt. If you 
+"Oh My Bash!" has been removed from this image in favor of a simple shell prompt. If you
 still wish to use it, remove "~/.oh-my-bash" and install it from: https://github.com/ohmybash/oh-my-bash
 You may also want to consider "Bash-it" as an alternative: https://github.com/bash-it/bash-it
 See here for infomation on adding it to your image or dotfiles: https://aka.ms/codespaces/omb-remove
