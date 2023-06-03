@@ -13,8 +13,6 @@ stages:
     displayName: "Markdown Linting"
     pool:
       vmImage: $(vmImage)
-    variables:
-
     steps:
       - script: |
           npm install markdownlint-cli2 --global
