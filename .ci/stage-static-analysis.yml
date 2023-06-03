@@ -17,22 +17,22 @@ stages:
       - script: |
           npm install markdownlint-cli2 --global
           npm install markdownlint-cli2-formatter-junit --global
-        displayName: 'install markdownlint-cli2'
+        displayName: "install markdownlint-cli2"
 
       - script: |
-          testFilepath=$(testResultsPath)
-          echo "Markdownlint report file: $testFilepath"
+          echo "Markdownlint report file: $TEST_RESULTS_PATH"
 
           echo "Creating needed folders..."
-          mkdir -p ${{ parameters.junitFolder }}
-          cd $(System.DefaultWorkingDirectory)
+          mkdir -p $TEST_RESULTS_PATH
+          cd $PROJECT_ROOT
 
           echo "Running markdownlint..."
           markdownlint-cli2 -config ".markdownlint-cli2.jsonc"
-        displayName: 'run markdownlint'
+        displayName: "run markdownlint"
         workingDirectory: $(System.DefaultWorkingDirectory)
         env:
           TEST_RESULTS_PATH: $(testResultsPath)
+          PROJECT_ROOT: $(System.DefaultWorkingDirectory)
 
       - task: PublishTestResults@2
         displayName: publish scan results
@@ -40,9 +40,9 @@ stages:
         inputs:
           testResultsFormat: "JUnit"
           testResultsFiles: "**/*.xml"
-          searchFolder: "${{ parameters.junitFolder }}"
+          searchFolder: "${{ parameters.testResultsPath }}"
           mergeTestResults: false
-          testRunTitle: Markdown Lint
+          testRunTitle: MARKDOWN_LINT
           failTaskOnFailedTests: true
           publishRunAttachments: true
 
@@ -51,10 +51,10 @@ stages:
             echo "Deleting $TEST_RESULTS_PATH"
             rm -rf "$TEST_RESULTS_PATH"
           fi
-        displayName: 'clean up'
+        displayName: "clean up"
         workingDirectory: $(System.DefaultWorkingDirectory)
         env:
-          TEST_RESULTS_PATH: $(testResultsPath)
+          TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
 
   # Markdown Spellchecking
   # PSScriptAnalyzer
