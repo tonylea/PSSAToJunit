@@ -1,5 +1,0 @@
-return @(
-    "BuildHelpers",
-    "Pester",
-    "PSScriptAnalyzer"
-)
