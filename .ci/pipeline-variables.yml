@@ -1,0 +1,5 @@
+variables:
+  vmImageName: "ubuntu-latest"
+  testsPath: $(System.DefaultWorkingDirectory)/tests
+  buildFolder: $(System.DefaultWorkingDirectory)/.build/
+  testResultsPath: $(System.DefaultWorkingDirectory)/test-results

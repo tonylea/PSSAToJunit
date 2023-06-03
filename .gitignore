@@ -129,6 +129,7 @@ dist
 report/
 ScriptAnalyzerResult.xml
 temp-files/
+test-results/
 
 ###############################################
 # MacOS                                       #

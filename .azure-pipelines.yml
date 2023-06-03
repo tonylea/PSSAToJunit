@@ -1,0 +1,33 @@
+name: $(BuildDefinitionName)_$(date:yyyyMMdd)_$(rev:.r)
+
+trigger:
+  branches:
+    include: ["main"]
+
+pr:
+  autoCancel: false
+  branches:
+    include: ["*"]
+
+pool:
+  vmImage: $(vmImageName)
+
+variables:
+  - template: ci/pipeline-variables.yml
+
+stages:
+  # Linting
+  - template: ./ci/stage-static-analysis.yml
+    parameters:
+      testResultsPath: $(testResultsPath)
+      vmImage: $(vmImage)
+
+  # Unit Tests
+  # Integration Tests
+    # Import
+    # Test outputs with pester
+  # Build
+    # Version bump
+    # Minify and Package
+    # Artifact
+  # Publish
