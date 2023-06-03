@@ -128,6 +128,7 @@ dist
 .env
 report/
 ScriptAnalyzerResult.xml
+temp-files/
 
 ###############################################
 # MacOS                                       #
