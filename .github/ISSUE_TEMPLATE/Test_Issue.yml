@@ -1,0 +1,26 @@
+name: Unit Test Addition/Update
+description: Suggest adding new tests or updating existing tests for the project
+labels: [Issue-Test, Needs-Triage]
+body:
+  - type: textarea
+    attributes:
+      label: Test Objective
+      description: |
+        Describe the objective or purpose of the test(s) you are proposing.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Affected Test(s)
+      description: |
+        Provide a clear and concise description of the tests you are suggesting to add or update.
+  - type: textarea
+    attributes:
+      label: Proposed Test(s)
+      description: |
+        Provide a detailed description of the proposed test(s) and include any necessary code snippets or examples.
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: |
+        If there is any additional information or context that would be helpful, provide it here.

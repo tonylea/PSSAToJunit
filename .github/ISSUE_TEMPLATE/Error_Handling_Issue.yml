@@ -1,0 +1,26 @@
+name: Error Handling Addition
+description: Suggest adding error handling to improve the robustness of the code
+labels: [Issue-Error-Handling, Needs-Triage]
+body:
+  - type: textarea
+    attributes:
+      label: Problem
+      description: |
+        Describe the problem or scenario where error handling is currently lacking or could be enhanced.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed Solution
+      description: |
+        Provide a detailed explanation of the proposed error handling implementation or improvements.
+  - type: textarea
+    attributes:
+      label: Impact Analysis
+      description: |
+        Explain the potential impact or benefits of adding the suggested error handling.
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: |
+        If there is any additional information or context that would be helpful, provide it here.
