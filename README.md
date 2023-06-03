@@ -10,6 +10,10 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/tonylea/PSSAToJunit)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/tonylea/PSSAToJunit)
 
+![PowerShell Gallery](https://img.shields.io/powershellgallery/p/PSSAToJunit)
+![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/PSSAToJunit)
+![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/PSSAToJunit)
+
 A simple PowerShell module to convert PSScriptAnalyzer results to jUnit.
 Intended to be used in GitHub or Azure DevOps pipelines.
 
