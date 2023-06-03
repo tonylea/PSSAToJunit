@@ -35,12 +35,12 @@ You can contribute to PSSAToJunit by:
 
 ### Reporting Bugs
 
-If you encounter any bugs while using PSSAToJunit, please help us by [opening a GitHub issue](.github/ISSUE_TEMPLATE/Bug_Report.yaml) and providing detailed information about the bug. Include steps to reproduce it, error messages if applicable, and any relevant environment details.
+If you encounter any bugs while using PSSAToJunit, please help us by [opening a GitHub issue]([.github/ISSUE_TEMPLATE/Bug_Report.yaml](https://github.com/tonylea/PSSAToJunit/issues/new?assignees=&labels=Issue-Bug%2CNeeds-Triage&projects=&template=Feature_Request.yaml)) and providing detailed information about the bug. Include steps to reproduce it, error messages if applicable, and any relevant environment details.
 
 ### Suggesting Enhancements
 
 We welcome suggestions for new features or enhancements to PSSAToJunit.
-Please [open a GitHub issue](.github/ISSUE_TEMPLATE/Feature_Request.yaml) and describe your idea or improvement in detail.
+Please [open a GitHub issue](https://github.com/tonylea/PSSAToJunit/issues/new?assignees=&labels=Issue-Enhancement%2CNeeds-Triage&projects=&template=Feature_Request.yaml) and describe your idea or improvement in detail.
 We appreciate well-defined feature requests that include context and potential use cases.
 
 ### Submitting Pull Requests
