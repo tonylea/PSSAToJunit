@@ -14,14 +14,17 @@
     # ClrVersion = ""
     # ProcessorArchitecture = ""
     RequiredModules      = @(
-        @{ ModuleName = "PSScriptAnalyzer"; ModuleVersion = "1.19.1" }
+        "PSScriptAnalyzer"
     )
     # RequiredAssemblies = @()
     # ScriptsToProcess = @()
     # TypesToProcess = @()
     # FormatsToProcess = @()
     # NestedModules = @()
-    FunctionsToExport    = @("Convert-PssaJunit")
+    FunctionsToExport    = @(
+        "ConvertTo-PSSAJunitXml"
+        "Export-PSSAJunitXml"
+    )
     CmdletsToExport      = @()
     VariablesToExport    = @()
     AliasesToExport      = @()
