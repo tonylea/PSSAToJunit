@@ -1,0 +1,23 @@
+name: Documentation Issue
+description: Suggest an improvement or correction to the documentation
+labels: [Issue-Documentation, Needs-Triage]
+body:
+  - type: textarea
+    attributes:
+      label: Documentation Section
+      description: |
+        Specify the section or page of the documentation that requires an amendment.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed Change
+      description: |
+        Describe the proposed change or improvement to the documentation.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: |
+        If there is any additional information or context that would be helpful, provide it here.
