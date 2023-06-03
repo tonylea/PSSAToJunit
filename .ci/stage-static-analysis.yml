@@ -1,0 +1,62 @@
+parameters:
+  - name: testResultsPath
+    type: string
+  - name: vmImage
+    type: string
+
+stages:
+- stage: staticAnalysis
+  displayName: Linting
+  jobs:
+  # Markdown Linting
+  - job: markdownlint
+    displayName: "Markdown Linting"
+    pool:
+      vmImage: $(vmImage)
+    variables:
+
+    steps:
+      - script: |
+          npm install markdownlint-cli2 --global
+          npm install markdownlint-cli2-formatter-junit --global
+        displayName: 'install markdownlint-cli2'
+
+      - script: |
+          testFilepath=$(testResultsPath)
+          echo "Markdownlint report file: $testFilepath"
+
+          echo "Creating needed folders..."
+          mkdir -p ${{ parameters.junitFolder }}
+          cd $(System.DefaultWorkingDirectory)
+
+          echo "Running markdownlint..."
+          markdownlint-cli2 -config ".markdownlint-cli2.jsonc"
+        displayName: 'run markdownlint'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+        env:
+          TEST_RESULTS_PATH: $(testResultsPath)
+
+      - task: PublishTestResults@2
+        displayName: publish scan results
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFormat: "JUnit"
+          testResultsFiles: "**/*.xml"
+          searchFolder: "${{ parameters.junitFolder }}"
+          mergeTestResults: false
+          testRunTitle: Markdown Lint
+          failTaskOnFailedTests: true
+          publishRunAttachments: true
+
+      - script: |
+          if [ -d "$TEST_RESULTS_PATH" ]; then
+            echo "Deleting $TEST_RESULTS_PATH"
+            rm -rf "$TEST_RESULTS_PATH"
+          fi
+        displayName: 'clean up'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+        env:
+          TEST_RESULTS_PATH: $(testResultsPath)
+
+  # Markdown Spellchecking
+  # PSScriptAnalyzer

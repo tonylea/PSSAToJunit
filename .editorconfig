@@ -20,7 +20,7 @@ end_of_line = lf
 indent_size = 2
 
 # Data serialization
-[*.{json,yaml,yml}]
+[*.{json,yaml,yml,jsonc}]
 indent_size = 2
 
 [.cspell.json]
