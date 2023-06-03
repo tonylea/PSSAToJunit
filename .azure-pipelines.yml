@@ -13,11 +13,11 @@ pool:
   vmImage: $(vmImageName)
 
 variables:
-  - template: ./ci/pipeline-variables.yml
+  - template: ./.ci/pipeline-variables.yml
 
 stages:
   # Linting
-  - template: ./ci/stage-static-analysis.yml
+  - template: ./.ci/stage-static-analysis.yml
     parameters:
       testResultsPath: $(testResultsPath)
       vmImage: $(vmImage)
