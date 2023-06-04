@@ -1,4 +1,8 @@
 parameters:
+  - name: srcFolder
+    type: string
+  - name: psscriptanalyzerConfigFilepath
+    type: string
   - name: testResultsPath
     type: string
   - name: vmImage
@@ -7,12 +11,12 @@ parameters:
 stages:
 - stage: staticAnalysis
   displayName: Linting
+  pool:
+    vmImage: $(vmImage)
   jobs:
   # Markdown Linting
   - job: markdownlint
     displayName: "Markdown Linting"
-    pool:
-      vmImage: $(vmImage)
     steps:
       - script: |
           npm install markdownlint-cli2 --global
@@ -56,5 +60,18 @@ stages:
         env:
           TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
 
-  # Markdown Spellchecking
   # PSScriptAnalyzer
+  - job: psscriptanalyzer
+    displayName: "PSScriptAnalyzer scan"
+    steps:
+    - pwsh: |
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -Repository PSGallery
+      displayName: "install psscriptanalyzer"
+
+    - pwsh: |
+        $ModuleFilepath = $ENV:POWESHELL_MODULE_PATH
+        Invoke-ScriptAnalyzer -Path $ModuleFilepath -Recurse -Settings PSGallery -EnableExit
+      displayName: "run PSScriptAnalyzer"
+      env:
+        POWESHELL_MODULE_PATH: ${{ parameters.srcFolder }}

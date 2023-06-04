@@ -19,6 +19,7 @@ stages:
   # Linting
   - template: ./.ci/stage-static-analysis.yml
     parameters:
+      srcFolder: $(srcFolder)
       testResultsPath: $(testResultsPath)
       vmImage: $(vmImage)
 
