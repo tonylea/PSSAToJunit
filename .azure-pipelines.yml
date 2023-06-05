@@ -1,13 +1,13 @@
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)_$(rev:.r)
 
-trigger:
-  branches:
-    include: ["main"]
+# trigger:
+#   branches:
+#     include: ["main"]
 
-pr:
-  autoCancel: false
-  branches:
-    include: ["*"]
+# pr:
+#   autoCancel: false
+#   branches:
+#     include: ["*"]
 
 pool:
   vmImage: $(vmImageName)

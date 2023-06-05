@@ -5,6 +5,10 @@ parameters:
     type: string
   - name: vmImage
     type: string
+  - name: megaLinterFlavour
+    type: string
+  - name: linterVersion
+    type: string
 
 stages:
   - stage: staticAnalysis
@@ -73,3 +77,11 @@ stages:
             displayName: "run PSScriptAnalyzer"
             env:
               POWERSHELL_MODULE_PATH: ${{ parameters.srcFolder }}
+
+      # Mega-Linter
+      - job: megalinter
+        displayName: "Mega-Linter scan"
+        steps:
+          - script: |
+              docker pull oxsecurity/${{ parameters.megaLinterFlavour }}:v${{ parameters.linterVersion }}
+            displayName: "pull mega-linter image"
