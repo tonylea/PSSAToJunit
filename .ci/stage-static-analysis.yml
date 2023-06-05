@@ -1,62 +1,87 @@
 parameters:
+  - name: srcFolder
+    type: string
   - name: testResultsPath
     type: string
   - name: vmImage
     type: string
+  - name: megaLinterFlavour
+    type: string
+  - name: linterVersion
+    type: string
 
 stages:
-- stage: staticAnalysis
-  displayName: Linting
-  jobs:
-  # Markdown Linting
-  - job: markdownlint
-    displayName: "Markdown Linting"
+  - stage: staticAnalysis
+    displayName: Linting
     pool:
       vmImage: $(vmImage)
-    variables:
+    jobs:
+      # Markdown Linting
+      - job: markdownlint
+        displayName: "Markdown Linting"
+        steps:
+          - script: |
+              npm install markdownlint-cli2 --global
+              npm install markdownlint-cli2-formatter-junit --global
+            displayName: "install markdownlint-cli2"
 
-    steps:
-      - script: |
-          npm install markdownlint-cli2 --global
-          npm install markdownlint-cli2-formatter-junit --global
-        displayName: 'install markdownlint-cli2'
+          - script: |
+              echo "Markdownlint report file: $TEST_RESULTS_PATH"
 
-      - script: |
-          testFilepath=$(testResultsPath)
-          echo "Markdownlint report file: $testFilepath"
+              echo "Creating needed folders..."
+              mkdir -p $TEST_RESULTS_PATH
+              cd $PROJECT_ROOT
 
-          echo "Creating needed folders..."
-          mkdir -p ${{ parameters.junitFolder }}
-          cd $(System.DefaultWorkingDirectory)
+              echo "Running markdownlint..."
+              markdownlint-cli2 -config ".markdownlint-cli2.jsonc"
+            displayName: "run markdownlint"
+            workingDirectory: $(System.DefaultWorkingDirectory)
+            env:
+              TEST_RESULTS_PATH: $(testResultsPath)
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
 
-          echo "Running markdownlint..."
-          markdownlint-cli2 -config ".markdownlint-cli2.jsonc"
-        displayName: 'run markdownlint'
-        workingDirectory: $(System.DefaultWorkingDirectory)
-        env:
-          TEST_RESULTS_PATH: $(testResultsPath)
+          - task: PublishTestResults@2
+            displayName: publish scan results
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: "JUnit"
+              testResultsFiles: "**/*.xml"
+              searchFolder: "${{ parameters.testResultsPath }}"
+              mergeTestResults: false
+              testRunTitle: MARKDOWN_LINT
+              failTaskOnFailedTests: true
+              publishRunAttachments: true
 
-      - task: PublishTestResults@2
-        displayName: publish scan results
-        condition: succeededOrFailed()
-        inputs:
-          testResultsFormat: "JUnit"
-          testResultsFiles: "**/*.xml"
-          searchFolder: "${{ parameters.junitFolder }}"
-          mergeTestResults: false
-          testRunTitle: Markdown Lint
-          failTaskOnFailedTests: true
-          publishRunAttachments: true
+          - script: |
+              if [ -d "$TEST_RESULTS_PATH" ]; then
+                echo "Deleting $TEST_RESULTS_PATH"
+                rm -rf "$TEST_RESULTS_PATH"
+              fi
+            displayName: "clean up"
+            workingDirectory: $(System.DefaultWorkingDirectory)
+            env:
+              TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
 
-      - script: |
-          if [ -d "$TEST_RESULTS_PATH" ]; then
-            echo "Deleting $TEST_RESULTS_PATH"
-            rm -rf "$TEST_RESULTS_PATH"
-          fi
-        displayName: 'clean up'
-        workingDirectory: $(System.DefaultWorkingDirectory)
-        env:
-          TEST_RESULTS_PATH: $(testResultsPath)
+      # PSScriptAnalyzer
+      - job: psscriptanalyzer
+        displayName: "PSScriptAnalyzer scan"
+        steps:
+          - pwsh: |
+              Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+              Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -Repository PSGallery
+            displayName: "install psscriptanalyzer"
 
-  # Markdown Spellchecking
-  # PSScriptAnalyzer
+          - pwsh: |
+              $ModuleFilepath = $ENV:POWERSHELL_MODULE_PATH
+              Invoke-ScriptAnalyzer -Path $ModuleFilepath -Recurse -Settings PSGallery -EnableExit
+            displayName: "run PSScriptAnalyzer"
+            env:
+              POWERSHELL_MODULE_PATH: ${{ parameters.srcFolder }}
+
+      # Mega-Linter
+      - job: megalinter
+        displayName: "Mega-Linter scan"
+        steps:
+          - script: |
+              docker pull oxsecurity/${{ parameters.megaLinterFlavour }}:v${{ parameters.linterVersion }}
+            displayName: "pull mega-linter image"

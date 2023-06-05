@@ -1,24 +1,25 @@
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)_$(rev:.r)
 
-trigger:
-  branches:
-    include: ["main"]
+# trigger:
+#   branches:
+#     include: ["main"]
 
-pr:
-  autoCancel: false
-  branches:
-    include: ["*"]
+# pr:
+#   autoCancel: false
+#   branches:
+#     include: ["*"]
 
 pool:
   vmImage: $(vmImageName)
 
 variables:
-  - template: ci/pipeline-variables.yml
+  - template: ./.ci/pipeline-variables.yml
 
 stages:
   # Linting
-  - template: ./ci/stage-static-analysis.yml
+  - template: ./.ci/stage-static-analysis.yml
     parameters:
+      srcFolder: $(srcFolder)
       testResultsPath: $(testResultsPath)
       vmImage: $(vmImage)
 

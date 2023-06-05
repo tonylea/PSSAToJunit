@@ -3,3 +3,6 @@ variables:
   testsPath: $(System.DefaultWorkingDirectory)/tests
   buildFolder: $(System.DefaultWorkingDirectory)/.build/
   testResultsPath: $(System.DefaultWorkingDirectory)/test-results
+  srcFolder: $(System.DefaultWorkingDirectory)/src
+  megaLinterFlavour: "all"
+  linterVersion: "latest"

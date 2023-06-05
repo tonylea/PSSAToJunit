@@ -1,9 +1,30 @@
 {
-    "version": "0.1",
+    "version": "0.2",
     "ignorePaths": [
-        "package-lock.json"
+        ".azure-devops/**",
+        ".azure-pipelines.yml",
+        ".ci/**",
+        ".devcontainer/**",
+        ".editorconfig",
+        ".husky/**",
+        ".markdownlint-cli2.jsonc",
+        ".versionrc.json",
+        ".vscode/**",
+        "cconventionalCommit.json",
+        "commitlint.config.js",
+        "helpers/**",
+        "node_modules/**",
+        "package-lock.json",
+        "package.json"
+    ],
+    "language": "en",
+    "dictionaries": [
+        "en-GB",
+        "powershell",
+        "softwareTerms"
     ],
     "words": [
+        "Analyzer",
         "chsh",
         "cli",
         "commitlint",
@@ -16,6 +37,7 @@
         "privatefunc",
         "pssa",
         "pssatojunit",
+        "psscriptanalyzer",
         "publicfunc",
         "pwsh"
     ],
