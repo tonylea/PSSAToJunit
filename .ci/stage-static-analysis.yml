@@ -68,8 +68,8 @@ stages:
       displayName: "install psscriptanalyzer"
 
     - pwsh: |
-        $ModuleFilepath = $ENV:POWESHELL_MODULE_PATH
+        $ModuleFilepath = $ENV:POWERSHELL_MODULE_PATH
         Invoke-ScriptAnalyzer -Path $ModuleFilepath -Recurse -Settings PSGallery -EnableExit
       displayName: "run PSScriptAnalyzer"
       env:
-        POWESHELL_MODULE_PATH: ${{ parameters.srcFolder }}
+        POWERSHELL_MODULE_PATH: ${{ parameters.srcFolder }}

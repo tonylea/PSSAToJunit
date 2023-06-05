@@ -4,6 +4,7 @@
         "package-lock.json"
     ],
     "words": [
+        "Analyzer",
         "chsh",
         "cli",
         "commitlint",
@@ -16,6 +17,7 @@
         "privatefunc",
         "pssa",
         "pssatojunit",
+        "psscriptanalyzer",
         "publicfunc",
         "pwsh"
     ],
