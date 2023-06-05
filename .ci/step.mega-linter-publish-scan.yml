@@ -1,0 +1,18 @@
+parameters:
+  - name: testResultsPath
+    type: string
+  - name: testName
+    type: string
+
+steps:
+  - task: PublishTestResults@2
+    displayName: "publish test: ${{ parameters.testName }}"
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: "**/mega-linter-${{ parameters.testName }}.xml"
+      searchFolder: "${{ parameters.testResultsPath }}"
+      mergeTestResults: false
+      failTaskOnFailedTests: true
+      testRunTitle: "${{ parameters.testName }}"
+      publishRunAttachments: true

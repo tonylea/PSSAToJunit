@@ -1,0 +1,15 @@
+parameters:
+  - name: testResultsPath
+    type: string
+
+steps:
+  - script: |
+      if [ -d "$TEST_RESULTS_PATH" ]; then
+        echo "Deleting $TEST_RESULTS_PATH"
+        rm -rf "$TEST_RESULTS_PATH"
+      fi
+    env:
+      TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
+    displayName: "clean up"
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    condition: succeededOrFailed()
