@@ -10,7 +10,7 @@
         ".markdownlint-cli2.jsonc",
         ".versionrc.json",
         ".vscode/**",
-        "cconventionalCommit.json",
+        "conventionalCommit.json",
         "commitlint.config.js",
         "helpers/**",
         "node_modules/**",

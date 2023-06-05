@@ -21,6 +21,10 @@
     "release": "standard-version",
     "upgrade": "ncu -u && npm install",
     "update": "npm run upgrade",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "jscpd": "jscpd . --reporters console"
+  },
+  "dependencies": {
+    "jscpd": "^3.5.9"
   }
 }

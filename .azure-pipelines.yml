@@ -22,6 +22,8 @@ stages:
       srcFolder: $(srcFolder)
       testResultsPath: $(testResultsPath)
       vmImage: $(vmImage)
+      megaLinterFlavour: $(megaLinterFlavour)
+      megaLinterVersion: $(megaLinterVersion)
 
   # Unit Tests
   # Integration Tests

@@ -4,5 +4,5 @@ variables:
   buildFolder: $(System.DefaultWorkingDirectory)/.build/
   testResultsPath: $(System.DefaultWorkingDirectory)/test-results
   srcFolder: $(System.DefaultWorkingDirectory)/src
-  megaLinterFlavour: "all"
-  linterVersion: "latest"
+  megaLinterFlavour: "megalinter-documentation"
+  megaLinterVersion: "7.0.4"

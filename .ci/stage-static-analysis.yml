@@ -7,7 +7,7 @@ parameters:
     type: string
   - name: megaLinterFlavour
     type: string
-  - name: linterVersion
+  - name: megaLinterVersion
     type: string
 
 stages:
@@ -34,11 +34,11 @@ stages:
 
               echo "Running markdownlint..."
               markdownlint-cli2 -config ".markdownlint-cli2.jsonc"
-            displayName: "run markdownlint"
-            workingDirectory: $(System.DefaultWorkingDirectory)
             env:
               TEST_RESULTS_PATH: $(testResultsPath)
               PROJECT_ROOT: $(System.DefaultWorkingDirectory)
+            displayName: "run markdownlint"
+            workingDirectory: $(System.DefaultWorkingDirectory)
 
           - task: PublishTestResults@2
             displayName: publish scan results
@@ -52,15 +52,9 @@ stages:
               failTaskOnFailedTests: true
               publishRunAttachments: true
 
-          - script: |
-              if [ -d "$TEST_RESULTS_PATH" ]; then
-                echo "Deleting $TEST_RESULTS_PATH"
-                rm -rf "$TEST_RESULTS_PATH"
-              fi
-            displayName: "clean up"
-            workingDirectory: $(System.DefaultWorkingDirectory)
-            env:
-              TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
+          - template: ./clean-up-tests.yml
+            parameters:
+              testResultsPath: ${{ parameters.testResultsPath }}
 
       # PSScriptAnalyzer
       - job: psscriptanalyzer
@@ -74,14 +68,96 @@ stages:
           - pwsh: |
               $ModuleFilepath = $ENV:POWERSHELL_MODULE_PATH
               Invoke-ScriptAnalyzer -Path $ModuleFilepath -Recurse -Settings PSGallery -EnableExit
-            displayName: "run PSScriptAnalyzer"
             env:
               POWERSHELL_MODULE_PATH: ${{ parameters.srcFolder }}
+            displayName: "run PSScriptAnalyzer"
 
       # Mega-Linter
       - job: megalinter
         displayName: "Mega-Linter scan"
         steps:
           - script: |
-              docker pull oxsecurity/${{ parameters.megaLinterFlavour }}:v${{ parameters.linterVersion }}
+              docker pull oxsecurity/$MEGALINTER_FLAVOUR:v$MEGALINTER_VERSION
+            env:
+              MEGALINTER_VERSION: ${{ parameters.megaLinterVersion }}
+              MEGALINTER_FLAVOUR: ${{ parameters.megaLinterFlavour }}
             displayName: "pull mega-linter image"
+
+          - script: |
+              docker run \
+                -v $DEFAULT_WORKING_DIRECTORY:/tmp/lint \
+                -e OUTPUT_FORMAT=tap \
+                -e OUTPUT_DETAIL=detailed \
+                -e ENABLE_LINTERS=,MARKDOWN_MARKDOWN_LINK_CHECK,MARKDOWN_MARKDOWN_TABLE_FORMATTER,EDITORCONFIG_EDITORCONFIG_CHECKER,SPELL_CSPELL \
+                --name mega-linter \
+                oxsecurity/$MEGALINTER_FLAVOUR:v$MEGALINTER_VERSION
+            env:
+              DEFAULT_WORKING_DIRECTORY: $(System.DefaultWorkingDirectory)
+              MEGALINTER_VERSION: ${{ parameters.megaLinterVersion }}
+              MEGALINTER_FLAVOUR: ${{ parameters.megaLinterFlavour }}
+            displayName: "run linting scans"
+            continueOnError: true
+
+          - script: |
+              npm install -g tap-junit@5.0.2
+
+              TAP_DIR=$DEFAULT_WORKING_DIRECTORY/megalinter-reports/tap
+              mkdir -pv $TEST_RESULTS_PATH
+              cd $TAP_DIR
+
+              for report in $TAP_DIR/*; do
+                INPUT_FILE=$(basename ${report})
+                OUTPUT_BASE_NAME=$(sed "s/.tap/.xml/g" <<<"$INPUT_FILE")
+                OUTPUT_FILE=$TEST_RESULTS_PATH/$OUTPUT_BASE_NAME
+
+                # workaround for https://github.com/dhershman1/tap-junit/issues/30#issuecomment-744462006
+                sudo sed -i "s/message: \*\+/message: /g" ${report}
+
+                # Some message got comments with # which are ignored by tap-junit, so we escape it
+                sudo sed -i -E "s/(^|[ ]+)(#)[a-zA-Z]*/\1\/\//g" ${report}
+
+                # Converting TAP files into xml files with JUnit5 format
+                cat ${report} | tap-junit -p -s "mega-linter" > $OUTPUT_FILE
+
+                # Remove escaping on newlines for readability
+                sudo sed -i 's/\\n/\n/g' $OUTPUT_FILE
+
+                # Replace ANSI colors as they are illegal characters
+                sudo sed -i 's/\x1b\[[0-9;]*m//g' $OUTPUT_FILE
+              done
+            env:
+              DEFAULT_WORKING_DIRECTORY: $(System.DefaultWorkingDirectory)
+              TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
+            displayName: "convert reports to junit"
+            condition: succeededOrFailed()
+
+          - template: ./step.mega-linter-publish-scan.yml
+            parameters:
+              testResultsPath: ${{ parameters.testResultsPath }}
+              testName: "MARKDOWN_MARKDOWN_LINK_CHECK"
+
+          - template: ./step.mega-linter-publish-scan.yml
+            parameters:
+              testResultsPath: ${{ parameters.testResultsPath }}
+              testName: "MARKDOWN_MARKDOWN_TABLE_FORMATTER"
+
+          - template: ./step.mega-linter-publish-scan.yml
+            parameters:
+              testResultsPath: ${{ parameters.testResultsPath }}
+              testName: "EDITORCONFIG_EDITORCONFIG_CHECKER"
+
+          - template: ./step.mega-linter-publish-scan.yml
+            parameters:
+              testResultsPath: ${{ parameters.testResultsPath }}
+              testName: "SPELL_CSPELL"
+
+          - template: ./clean-up-tests.yml
+            parameters:
+              testResultsPath: ${{ parameters.testResultsPath }}
+
+          - script: |
+              docker rm mega-linter
+            displayName: "remove mega-linter container"
+            condition: succeededOrFailed()
+
+      # Secretlint https://github.com/secretlint/secretlint#readmeMEGALINTER_FLAVOUR
