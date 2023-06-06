@@ -9,6 +9,8 @@ parameters:
     type: string
   - name: megaLinterVersion
     type: string
+  - name: secretlintVersion
+    type: string
 
 stages:
   - stage: staticAnalysis
