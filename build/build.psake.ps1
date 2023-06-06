@@ -63,7 +63,7 @@ Task UnitTests -Depends Init {
             )
         }
         Output       = @{
-            Verbosity = "Detailed"
+            Verbosity = "Normal"
         }
     }
     Invoke-Pester -Configuration $Config
