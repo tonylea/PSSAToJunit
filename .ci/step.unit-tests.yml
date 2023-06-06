@@ -28,7 +28,7 @@ steps:
     workingDirectory: $(System.DefaultWorkingDirectory)
 
   - task: PublishTestResults@2
-    displayName: publish scan results
+    displayName: publish unit tests
     condition: succeededOrFailed()
     inputs:
       testResultsFormat: "JUnit"
@@ -39,14 +39,13 @@ steps:
       failTaskOnFailedTests: true
       publishRunAttachments: true
 
-  - task: CodeCoverage@1
-    displayName: publish code coverage results
+  - task: PublishCodeCoverageResults@1
+    displayName: publish code coverage
     condition: succeededOrFailed()
     inputs:
-      codeCoverageTool: 'JaCoCo'
-      summaryFileLocation: '${{ parameters.testResultsPath }}/${{ parameters.operatingSystem }}-code-coverage.xml'
+      codeCoverageTool: JaCoCo
+      summaryFileLocation: "**/${{ parameters.operatingSystem }}-code-coverage.xml"
       failIfCoverageEmpty: true
-      failIfCoverageBelow: 75
 
   - template: ./step.clean-up-tests.yml
     parameters:
