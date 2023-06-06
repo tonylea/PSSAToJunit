@@ -8,7 +8,13 @@ function Get-TestSuite {
         $Severity
     )
 
-    $ScriptAnalyzerRules = Get-ScriptAnalyzerRule -Severity $Severity
+    try {
+        $ScriptAnalyzerRules = Get-ScriptAnalyzerRule -Severity $Severity
+    }
+    catch {
+        Write-Error "Failed to retrieve ScriptAnalyzer rules: $_"
+        return
+    }
 
     $TestSuites = @{}
     foreach ($Rule in $ScriptAnalyzerRules) {

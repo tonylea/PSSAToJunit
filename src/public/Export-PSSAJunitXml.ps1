@@ -18,10 +18,20 @@ function Export-PSSAJunitXml {
     }
 
     process {
-        $InputXml.Save($FilePath)
+        try {
+            $InputXml.Save($FilePath)
+        }
+        catch {
+            Write-Error "Error saving file: $_"
+        }
     }
 
     end {
-        Write-Debug "File created at: $FilePath"
+        if (Test-Path $FilePath) {
+            Write-Debug "File created at: $FilePath"
+        }
+        else {
+            Write-Error "File not created"
+        }
     }
 }
