@@ -1,0 +1,52 @@
+parameters:
+  - name: operatingSystem
+    type: string
+  - name: testResultsPath
+    type: string
+
+steps:
+  - pwsh: |
+      $BuildFolder = Join-Path -Path $ENV:ROOT_FOLDER -ChildPath $ENV:BUILD_FOLDER_NAME
+      $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $ENV:BUILD_FILENAME
+      $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $ENV:DEPENDANCY_FILENAME
+
+      Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
+
+      $BuildScriptPathArgs = @{
+        ResolveDependency = $true
+        DependencyConfigPath = $DependancyConfigPath
+        Task = "UnitTests"
+      }
+
+      . $BuildScriptPath @BuildScriptPathArgs
+    env:
+      ROOT_FOLDER: $(System.DefaultWorkingDirectory)
+      BUILD_FOLDER_NAME: build
+      BUILD_FILENAME: build.ps1
+      DEPENDANCY_FILENAME: dependancies.psd1
+    displayName: Pester tests
+    workingDirectory: $(System.DefaultWorkingDirectory)
+
+  - task: PublishTestResults@2
+    displayName: publish unit tests
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultsFiles: "**/${{ parameters.operatingSystem }}-unit-tests.xml"
+      searchFolder: "${{ parameters.testResultsPath }}"
+      mergeTestResults: false
+      testRunTitle: ${{ parameters.operatingSystem }}-unit-tests
+      failTaskOnFailedTests: true
+      publishRunAttachments: true
+
+  - task: PublishCodeCoverageResults@1
+    displayName: publish code coverage
+    condition: succeededOrFailed()
+    inputs:
+      codeCoverageTool: JaCoCo
+      summaryFileLocation: "**/${{ parameters.operatingSystem }}-code-coverage.xml"
+      failIfCoverageEmpty: true
+
+  - template: ./step.clean-up-tests.yml
+    parameters:
+      testResultsPath: ${{ parameters.testResultsPath }}
