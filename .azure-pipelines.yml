@@ -10,7 +10,7 @@ name: $(BuildDefinitionName)_$(date:yyyyMMdd)_$(rev:.r)
 #     include: ["*"]
 
 pool:
-  vmImage: $(vmImageName)
+  vmImage: $(vmImage)
 
 variables:
   - template: ./.ci/pipeline-variables.yml
