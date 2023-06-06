@@ -52,7 +52,7 @@ stages:
               failTaskOnFailedTests: true
               publishRunAttachments: true
 
-          - template: ./clean-up-tests.yml
+          - template: ./step.clean-up-tests.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
 
@@ -151,7 +151,7 @@ stages:
               testResultsPath: ${{ parameters.testResultsPath }}
               testName: "SPELL_CSPELL"
 
-          - template: ./clean-up-tests.yml
+          - template: ./step.clean-up-tests.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
 
@@ -196,6 +196,6 @@ stages:
               failTaskOnFailedTests: true
               publishRunAttachments: true
 
-          - template: ./clean-up-tests.yml
+          - template: ./step.clean-up-tests.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
