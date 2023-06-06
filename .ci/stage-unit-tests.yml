@@ -9,10 +9,13 @@ parameters:
 stages:
   - stage: unitTests
     displayName: Unit Tests
+    dependsOn: [staticAnalysis]
+    condition: succeeded()
     jobs:
       - job: linuxUnitTests
         displayName: "Linux Tests"
-        vmImage: $(vmLinuxImage)
+        pool:
+          vmImage: $(vmLinuxImage)
         steps:
           - template: .ci/steps.unit-tests.yml
             parameters:
