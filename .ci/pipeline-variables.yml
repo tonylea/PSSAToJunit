@@ -1,9 +1,12 @@
 variables:
-  vmImage: "ubuntu-latest"
+  vmLinuxImage: "ubuntu-latest"
+  vmWindowsImage: "windows-latest"
+  vmMacosImage: "macos-latest"
   testsPath: $(System.DefaultWorkingDirectory)/tests
-  buildFolder: $(System.DefaultWorkingDirectory)/.build/
   testResultsPath: $(System.DefaultWorkingDirectory)/test-results
   srcFolder: $(System.DefaultWorkingDirectory)/src
+  # markdownlintCliVersion: "0.7.1"
+  # psScriptAnalyzerVersion: "1.21.0"
   megaLinterFlavour: "megalinter-documentation"
   megaLinterVersion: "7.0.4"
   secretlintVersion: "6.2.3"

@@ -10,7 +10,7 @@ pr:
     include: ["*"]
 
 pool:
-  vmImage: $(vmImage)
+  vmImage: $(vmLinuxImage)
 
 variables:
   - template: ./.ci/pipeline-variables.yml
@@ -21,12 +21,21 @@ stages:
     parameters:
       srcFolder: $(srcFolder)
       testResultsPath: $(testResultsPath)
-      vmImage: $(vmImage)
+      vmImage: $(vmLinuxImage)
       megaLinterFlavour: $(megaLinterFlavour)
       megaLinterVersion: $(megaLinterVersion)
       secretlintVersion: $(secretlintVersion)
 
   # Unit Tests
+  - template: ./.ci/stage-unit-tests.yml
+    parameters:
+      buildFolder: $(buildFolder)
+      # srcFolder: $(srcFolder)
+      testResultsPath: $(testResultsPath)
+      vmLinuxImage: $(vmLinuxImage)
+      # vmWindowsImage: $(vmWindowsImage)
+      # vmMacosImage: $(vmMacosImage)
+
   # Integration Tests
     # Import
     # Test outputs with pester

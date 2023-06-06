@@ -1,0 +1,20 @@
+parameters:
+  - name: buildFolder
+    type: string
+  - name: vmLinuxImage
+    type: string
+  - name: testResultsPath
+    type: string
+
+stages:
+  - stage: unitTests
+    displayName: Unit Tests
+    jobs:
+      - job: linuxUnitTests
+        displayName: "Linux Tests"
+        vmImage: $(vmLinuxImage)
+        steps:
+          - template: .ci/steps.unit-tests.yml
+            parameters:
+              operatingSystem: Linux
+              testResultsPath: ${{ parameters.testResultsPath }}
