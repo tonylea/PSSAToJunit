@@ -1,9 +1,13 @@
 parameters:
   - name: buildFolder
     type: string
+  - name: testResultsPath
+    type: string
   - name: vmLinuxImage
     type: string
-  - name: testResultsPath
+  - name: vmMacosImage
+    type: string
+  - name: vmWindowsImage
     type: string
 
 stages:
@@ -20,4 +24,24 @@ stages:
           - template: ./step.unit-tests.yml
             parameters:
               operatingSystem: Linux
+              testResultsPath: ${{ parameters.testResultsPath }}
+
+      - job: macosUnitTests
+        displayName: "MacOS Tests"
+        pool:
+          vmImage: $(vmMacosImage)
+        steps:
+          - template: ./step.unit-tests.yml
+            parameters:
+              operatingSystem: macOS
+              testResultsPath: ${{ parameters.testResultsPath }}
+
+      - job: windowsUnitTests
+        displayName: "Windows Tests"
+        pool:
+          vmImage: $(vmWindowsImage)
+        steps:
+          - template: ./step.unit-tests.yml
+            parameters:
+              operatingSystem: Windows
               testResultsPath: ${{ parameters.testResultsPath }}
