@@ -17,7 +17,7 @@ stages:
         pool:
           vmImage: $(vmLinuxImage)
         steps:
-          - template: .ci/steps.unit-tests.yml
+          - template: ./steps.unit-tests.yml
             parameters:
               operatingSystem: Linux
               testResultsPath: ${{ parameters.testResultsPath }}
