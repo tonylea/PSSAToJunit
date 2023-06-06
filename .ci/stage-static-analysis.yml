@@ -16,7 +16,7 @@ stages:
   - stage: staticAnalysis
     displayName: Linting
     pool:
-      vmImage: $(vmImage)
+      vmImage: ${{ parameters.vmImage }}
     jobs:
       # Markdown Linting
       - job: markdownlint

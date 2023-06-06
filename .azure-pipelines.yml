@@ -9,9 +9,6 @@ pr:
   branches:
     include: ["*"]
 
-pool:
-  vmImage: $(vmLinuxImage)
-
 variables:
   - template: ./.ci/pipeline-variables.yml
 
