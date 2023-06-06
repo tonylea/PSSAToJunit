@@ -1,0 +1,13 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "https://github.com/tonylea/PSSAToJunit/issues/new"
+    }
+  ],
+  "retryOn429": true,
+  "retryCount": 5,
+  "aliveStatusCodes": [
+    200,
+    203
+  ]
+}

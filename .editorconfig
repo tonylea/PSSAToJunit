@@ -1,5 +1,3 @@
-# EditorConfig is awesome: https://EditorConfig.org
-
 # Top-most EditorConfig file
 root = true
 
@@ -25,7 +23,6 @@ indent_size = 2
 
 [.cspell.json]
 indent_size = 4
-insert_final_newline = false
 
 # Markdown
 [*.md]

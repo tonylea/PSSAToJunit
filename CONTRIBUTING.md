@@ -6,17 +6,19 @@ This document outlines the guidelines for contributing to the project.
 
 ## Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
-- [How Can I Contribute?](#how-can-i-contribute)
-  - [Reporting Bugs](#reporting-bugs)
-  - [Suggesting Enhancements](#suggesting-enhancements)
-  - [Submitting Pull Requests](#submitting-pull-requests)
-- [Development Setup](#development-setup)
-- [Commit Message Guidelines](#commit-message-guidelines)
-- [Testing](#testing)
-- [Linting and Spell Checking](#linting-and-spell-checking)
-- [Continuous Integration and Delivery (CI/CD)](#continuous-integration-and-delivery-cicd)
-- [License](#license)
+- [Contributing to PSSAToJunit](#contributing-to-pssatojunit)
+  - [Table of Contents](#table-of-contents)
+  - [Code of Conduct](#code-of-conduct)
+  - [How Can I Contribute?](#how-can-i-contribute)
+    - [Reporting Bugs](#reporting-bugs)
+    - [Suggesting Enhancements](#suggesting-enhancements)
+    - [Submitting Pull Requests](#submitting-pull-requests)
+  - [Development Setup](#development-setup)
+  - [Commit Message Guidelines](#commit-message-guidelines)
+  - [Testing](#testing)
+  - [Linting and Spell Checking](#linting-and-spell-checking)
+  - [Continuous Integration and Delivery (CI/CD)](#continuous-integration-and-delivery-cicd)
+  - [License](#license)
 
 ## Code of Conduct
 
