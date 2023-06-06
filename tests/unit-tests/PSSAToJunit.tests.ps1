@@ -1,6 +1,7 @@
 Describe "$($ENV:BHProjectName) Manifest" {
     BeforeAll {
         $BuildVarModulePath = Join-Path -Path ($PSScriptRoot -replace "tests.+") -ChildPath "helpers" -AdditionalChildPath "Set-TestHelperEnvVars.psm1"
+        Import-Module -Name $BuildVarModulePath -Force
         Set-TestHelperEnvVars -Path $PSScriptRoot
 
         $ManifestPath = $ENV:BHPSModuleManifest
