@@ -1,8 +1,13 @@
 {
-    "version": "0.2",
+    "dictionaries": [
+        "powershell",
+        "softwareTerms"
+    ],
     "ignorePaths": [
         ".azure-devops/**",
         ".azure-pipelines.yml",
+        ".cspell.json",
+        ".gitignore",
         ".ci/**",
         ".devcontainer/**",
         ".editorconfig",
@@ -17,30 +22,6 @@
         "package-lock.json",
         "package.json"
     ],
-    "language": "en",
-    "dictionaries": [
-        "en-GB",
-        "powershell",
-        "softwareTerms"
-    ],
-    "words": [
-        "Analyzer",
-        "chsh",
-        "cli",
-        "commitlint",
-        "config",
-        "devcontainers",
-        "editorconfig",
-        "gitlens",
-        "husky",
-        "junit",
-        "privatefunc",
-        "pssa",
-        "pssatojunit",
-        "psscriptanalyzer",
-        "publicfunc",
-        "pwsh"
-    ],
     "ignoreWords": [
         "coenraads",
         "davidanson",
@@ -49,5 +30,37 @@
         "oderwat",
         "pkief",
         "remotehub"
+    ],
+    "language": "en-GB",
+    "version": "0.2",
+    "words": [
+        "Analyzer",
+        "BHPS",
+        "LINTERS",
+        "Prerelease",
+        "Vars",
+        "chsh",
+        "cli",
+        "commitlint",
+        "config",
+        "devcontainer",
+        "devcontainers",
+        "editorconfig",
+        "fullname",
+        "gitlens",
+        "husky",
+        "junit",
+        "linters",
+        "markdownlint",
+        "privatefunc",
+        "pssa",
+        "pssatojunit",
+        "psscriptanalyzer",
+        "publicfunc",
+        "pwsh",
+        "secretlintrc",
+        "testsuite",
+        "testsuites",
+        "versionrc"
     ]
 }

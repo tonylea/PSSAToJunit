@@ -45,7 +45,7 @@ stages:
             condition: succeededOrFailed()
             inputs:
               testResultsFormat: "JUnit"
-              testResultsFiles: "**/*.xml"
+              testResultsFiles: "**/markdownlint-report.xml"
               searchFolder: "${{ parameters.testResultsPath }}"
               mergeTestResults: false
               testRunTitle: MARKDOWN_LINT
@@ -161,3 +161,41 @@ stages:
             condition: succeededOrFailed()
 
       # Secretlint https://github.com/secretlint/secretlint#readmeMEGALINTER_FLAVOUR
+      - job: secretlint
+        displayName: "Secretlint scan"
+        steps:
+          - script: |
+              npm install
+            env:
+              SECRETLINT_VERSION: ${{ parameters.secretlintVersion }}
+            displayName: "install secretlint image"
+            workingDirectory: $(System.DefaultWorkingDirectory)
+
+          - script: |
+              echo "Creating needed folders..."
+              mkdir -p $TEST_RESULTS_PATH
+              cd $PROJECT_ROOT
+
+              echo "Running secretlint..."
+              npx secretlint --maskSecrets --format junit --output $TEST_RESULTS_PATH/secretlint.xml '**/*'
+            env:
+              TEST_RESULTS_PATH: $(testResultsPath)
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
+            displayName: "run secretlint"
+            workingDirectory: $(System.DefaultWorkingDirectory)
+
+          - task: PublishTestResults@2
+            displayName: publish scan results
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: "JUnit"
+              testResultsFiles: "**/secretlint.xml"
+              searchFolder: "${{ parameters.testResultsPath }}"
+              mergeTestResults: false
+              testRunTitle: MARKDOWN_LINT
+              failTaskOnFailedTests: true
+              publishRunAttachments: true
+
+          - template: ./clean-up-tests.yml
+            parameters:
+              testResultsPath: ${{ parameters.testResultsPath }}

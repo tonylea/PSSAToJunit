@@ -9,11 +9,18 @@
   "devDependencies": {
     "@commitlint/cli": "17.6.5",
     "@commitlint/config-conventional": "17.6.5",
+    "@secretlint/secretlint-rule-azure": "^6.2.3",
+    "@secretlint/secretlint-rule-pattern": "^6.2.3",
+    "@secretlint/secretlint-rule-preset-recommend": "^6.2.3",
+    "@secretlint/secretlint-rule-privatekey": "^6.2.3",
     "git-cz": "^4.9.0",
     "husky": "^8.0.3",
+    "markdown-link-check": "^3.11.2",
     "markdownlint-cli2": "^0.7.1",
     "markdownlint-cli2-formatter-junit": "^0.0.6",
+    "mega-linter-runner": "^7.0.0",
     "npm-check-updates": "^16.10.12",
+    "secretlint": "^6.2.3",
     "standard-version": "9.5.0"
   },
   "scripts": {
@@ -22,9 +29,8 @@
     "upgrade": "ncu -u && npm install",
     "update": "npm run upgrade",
     "commit": "git-cz",
-    "jscpd": "jscpd . --reporters console"
-  },
-  "dependencies": {
-    "jscpd": "^3.5.9"
+    "markdown-link-check": "markdown-link-check --config ./markdown-link-check-config.json",
+    "secretlint": "secretlint '**/*'",
+    "megalinter": "mega-linter-runner --path ./ --flavor documentation --release v7.0.4 --fix --remove-container"
   }
 }
