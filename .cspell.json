@@ -22,6 +22,7 @@
         "conventionalCommit.json",
         "helpers/**",
         "node_modules/**",
+        "tests/**",
         "package-lock.json",
         "package.json"
     ],
