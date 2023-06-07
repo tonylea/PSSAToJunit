@@ -1,4 +1,3 @@
-<!-- markdownlint-disable MD025 -->
 # PSSAToJunit
 ## about_PPSSAToJunit
 
