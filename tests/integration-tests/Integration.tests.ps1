@@ -38,8 +38,8 @@ Describe "Integration Tests" {
         BeforeAll {
             # Create a piece of sample data
         }
-        # It "Shouuld eport the sample data to a file" {}
-        # It "Should export the resuils of the pipeleine to a file" {}
+        # It "Should export the sample data to a file" {}
+        # It "Should export the results of the pipeline to a file" {}
 
     }
 
