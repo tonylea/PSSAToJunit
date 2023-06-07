@@ -1,0 +1,47 @@
+parameters:
+  - name: buildFolder
+    type: string
+  - name: testResultsPath
+    type: string
+  - name: vmLinuxImage
+    type: string
+  - name: vmMacosImage
+    type: string
+  - name: vmWindowsImage
+    type: string
+
+stages:
+  - stage: integrationTests
+    displayName: Integration Tests
+    dependsOn: [unitTests]
+    condition: succeeded()
+    jobs:
+      - job: linuxUnitTests
+        displayName: "Linux"
+        pool:
+          vmImage: $(vmLinuxImage)
+        steps:
+          - template: ./step.integration-tests.yml
+            parameters:
+              operatingSystem: Linux
+              testResultsPath: ${{ parameters.testResultsPath }}
+
+      - job: macosUnitTests
+        displayName: "MacOS"
+        pool:
+          vmImage: $(vmMacosImage)
+        steps:
+          - template: ./step.integration-tests.yml
+            parameters:
+              operatingSystem: macOS
+              testResultsPath: ${{ parameters.testResultsPath }}
+
+      - job: windowsUnitTests
+        displayName: "Windows"
+        pool:
+          vmImage: $(vmWindowsImage)
+        steps:
+          - template: ./step.integration-tests.yml
+            parameters:
+              operatingSystem: Windows
+              testResultsPath: ${{ parameters.testResultsPath }}

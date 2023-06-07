@@ -13,7 +13,7 @@ param (
     $ImportProjectModule,
 
     [Parameter(Mandatory)]
-    [ValidateSet("UnitTests")]
+    [ValidateSet("UnitTests", "IntegrationTests")]
     [System.String]
     $Task,
 
@@ -81,6 +81,4 @@ $InvokePsakeArgs = @{
 }
 Invoke-Psake @InvokePsakeArgs
 
-# Write-Host -AnsiColors "`nFINISHED TASKS" -ForegroundColor Green
-
-# exit ( [int](-not $psake.build_success) )
+exit ( [int](-not $psake.build_success) )

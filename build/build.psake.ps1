@@ -22,6 +22,10 @@ Properties {
         }
     }
 
+    $UnitTestsFolder = Join-Path -Path $ProjectRoot -ChildPath "tests" -AdditionalChildPath "unit-tests"
+
+    $IntegrationTestsFolder = Join-Path -Path $ProjectRoot -ChildPath "tests" -AdditionalChildPath "integration-tests"
+
     $Lines
     if (-not $Lines) {
         $Lines = '----------------------------------------------------------------------'
@@ -50,7 +54,7 @@ Task UnitTests -Depends Init {
             Enabled       = $true
             OutputFormat  = "JUnitXml"
             OutputPath    = Join-Path -Path $TestResultsFolder -ChildPath "$OperatingSystem-unit-tests.xml"
-            TestSuiteName = "Pester_$OperatingSystem" # default
+            TestSuiteName = "Unit_Tests_$OperatingSystem" # default
         }
         CodeCoverage = @{
             Enabled      = $true
@@ -63,6 +67,29 @@ Task UnitTests -Depends Init {
             )
         }
         Output       = @{
+            Verbosity = "Normal"
+        }
+    }
+    Invoke-Pester -Configuration $Config
+
+    Write-Host "`n"
+}
+
+Task IntegrationTests -Depends Init {
+    Write-Host "`n$Lines`n"
+
+    $Config = [PesterConfiguration]@{
+        Run        = @{
+            Path     = $UnitTestsFolder
+            PassThru = $true
+        }
+        TestResult = @{
+            Enabled       = $true
+            OutputFormat  = "JUnitXml"
+            OutputPath    = Join-Path -Path $TestResultsFolder -ChildPath "$OperatingSystem-integration-tests.xml"
+            TestSuiteName = "Integration_$OperatingSystem" # default
+        }
+        Output     = @{
             Verbosity = "Normal"
         }
     }
