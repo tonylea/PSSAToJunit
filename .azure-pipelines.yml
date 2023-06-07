@@ -27,15 +27,20 @@ stages:
   - template: ./.ci/stage-unit-tests.yml
     parameters:
       buildFolder: $(buildFolder)
-      # srcFolder: $(srcFolder)
       testResultsPath: $(testResultsPath)
       vmLinuxImage: $(vmLinuxImage)
       vmMacosImage: $(vmMacosImage)
       vmWindowsImage: $(vmWindowsImage)
 
   # Integration Tests
-    # Import
-    # Test outputs with pester
+  - template: ./.ci/stage-integration-tests.yml
+    parameters:
+      buildFolder: $(buildFolder)
+      testResultsPath: $(testResultsPath)
+      vmLinuxImage: $(vmLinuxImage)
+      vmMacosImage: $(vmMacosImage)
+      vmWindowsImage: $(vmWindowsImage)
+
   # Build
     # Version bump
     # Minify and Package
