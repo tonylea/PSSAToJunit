@@ -44,9 +44,6 @@ stages:
   # Build
   - template: ./.ci/stage-build.yml
     parameters:
-      buildFolder: $(buildFolder)
-      docsFolder: $(docsFolder)
-      srcFolder: $(srcFolder)
       vmLinuxImage: $(vmLinuxImage)
 
   # Publish

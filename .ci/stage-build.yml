@@ -1,10 +1,4 @@
 parameters:
-  - name: buildFolder
-    type: string
-  - name: docsFolder
-    type: string
-  - name: srcFolder
-    type: string
   - name: vmLinuxImage
     type: string
 
@@ -33,11 +27,11 @@ stages:
             Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
 
             $BuildScriptPathArgs = @{
-              ResolveDependency = $true
+              ResolveDependency    = $true
               DependencyConfigPath = $DependancyConfigPath
-              Task = "UpdateExternalHelpFile"
+              Task                 = "UpdateExternalHelpFile"
+              ImportProjectModule  = $true
             }
-
             . $BuildScriptPath @BuildScriptPathArgs
           env:
             ROOT_FOLDER: $(System.DefaultWorkingDirectory)
@@ -47,8 +41,37 @@ stages:
           displayName: run platyPS
           workingDirectory: $(System.DefaultWorkingDirectory)
 
-
       # Version bump (package.json & manifest), push and tag
+      - job: versionBump
+        displayName: Version bump
+        dependsOn: updateHelp
+        condition: succeeded()
+        steps:
+          - pwsh: |
+              $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
+              $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
+              $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
+
+              Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
+
+              $BuildScriptPathArgs = @{
+                ResolveDependency = $true
+                DependencyConfigPath = $DependancyConfigPath
+                Task = "GetVersion"
+              }
+              . $BuildScriptPath @BuildScriptPathArgs
+            env:
+              ROOT_FOLDER: $(System.DefaultWorkingDirectory)
+              BUILD_FOLDER_NAME: build
+              BUILD_FILENAME: build.ps1
+              DEPENDANCY_FILENAME: dependancies.psd1
+            displayName: get version
+            workingDirectory: $(System.DefaultWorkingDirectory)
+
+          # Update manifest
+          # Update package.json, tag & push
+
+      # Generate help xml
       # minify code
       # package
       # Save as artifact
