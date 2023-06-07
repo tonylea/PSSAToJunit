@@ -6,7 +6,7 @@
     Author               = "Tony Lea"
     CompanyName          = ""
     Copyright            = "(c) Tony Lea. All rights reserved."
-    Description          = "A simple PowerShell module to convert PSScriptAnalyzer results to jUnit"
+    Description          = "Convert PSScriptAnalyzer results to JUnit"
     PowerShellVersion    = "7.0.0"
     # PowerShellHostName = ""
     # PowerShellHostVersion = ""

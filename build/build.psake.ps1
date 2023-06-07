@@ -22,9 +22,17 @@ Properties {
         }
     }
 
-    $UnitTestsFolder = Join-Path -Path $ProjectRoot -ChildPath "tests" -AdditionalChildPath "unit-tests"
+    If (-not $UnitTestsFolder) {
+        $UnitTestsFolder = Join-Path -Path $ProjectRoot -ChildPath "tests" -AdditionalChildPath "unit-tests"
+    }
 
-    $IntegrationTestsFolder = Join-Path -Path $ProjectRoot -ChildPath "tests" -AdditionalChildPath "integration-tests"
+    if (-not $IntegrationTestsFolder) {
+        $IntegrationTestsFolder = Join-Path -Path $ProjectRoot -ChildPath "tests" -AdditionalChildPath "integration-tests"
+    }
+
+    if (-not $ExternalHelpFolder) {
+        $ExternalHelpFolder = Join-Path -Path $ProjectRoot -ChildPath "docs"
+    }
 
     $Lines
     if (-not $Lines) {
@@ -97,3 +105,27 @@ Task IntegrationTests -Depends Init {
 
     Write-Host "`n"
 }
+
+Task UpdateExternalHelpFile -Depends Init {
+    $lines
+
+
+
+    $NewExternalHelpArgs = @{
+        Path       = Join-Path -Path $ProjectRoot -ChildPath docs
+        OutputPath = Join-Path -Path $StagingModulePath -ChildPath en-US
+    }
+    New-ExternalHelp @NewExternalHelpArgs
+}
+
+$OutputFolder = $ExternalHelpFolder
+$parameters = @{
+    Module                = $env:BHProjectName
+    OutputFolder          = $OutputFolder
+    AlphabeticParamsOrder = $true
+    WithModulePage        = $true
+    ExcludeDontShow       = $true
+    Encoding              = [System.Text.Encoding]::UTF8
+}
+New-MarkdownHelp @parameters
+New-MarkdownAboutHelp -OutputFolder $OutputFolder -AboutName "Publishing_test_results_to_Azure_Devops.md"

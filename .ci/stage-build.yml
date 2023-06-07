@@ -1,0 +1,54 @@
+parameters:
+  - name: buildFolder
+    type: string
+  - name: docsFolder
+    type: string
+  - name: srcFolder
+    type: string
+  - name: vmLinuxImage
+    type: string
+
+stages:
+  - stage: build
+    displayName: Build
+    dependsOn: [integrationTests]
+    condition: succeeded()
+    # condition: |
+    #   and(
+    #     succeeded(),
+    #     eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+    #   )
+    pool:
+      vmImage: $(vmLinuxImage)
+    jobs:
+      # update help files
+      job: updateHelp
+      displayName: Update help files
+      steps:
+        - pwsh: |
+            $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
+            $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
+            $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
+
+            Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
+
+            $BuildScriptPathArgs = @{
+              ResolveDependency = $true
+              DependencyConfigPath = $DependancyConfigPath
+              Task = "UpdateExternalHelpFile"
+            }
+
+            . $BuildScriptPath @BuildScriptPathArgs
+          env:
+            ROOT_FOLDER: $(System.DefaultWorkingDirectory)
+            BUILD_FOLDER_NAME: build
+            BUILD_FILENAME: build.ps1
+            DEPENDANCY_FILENAME: dependancies.psd1
+          displayName: run platyPS
+          workingDirectory: $(System.DefaultWorkingDirectory)
+
+
+      # Version bump (package.json & manifest), push and tag
+      # minify code
+      # package
+      # Save as artifact

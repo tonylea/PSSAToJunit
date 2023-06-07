@@ -42,7 +42,11 @@ stages:
       vmWindowsImage: $(vmWindowsImage)
 
   # Build
-    # Version bump
-    # Minify and Package
-    # Artifact
+  - template: ./.ci/stage-build.yml
+    parameters:
+      buildFolder: $(buildFolder)
+      docsFolder: $(docsFolder)
+      srcFolder: $(srcFolder)
+      vmLinuxImage: $(vmLinuxImage)
+
   # Publish
