@@ -1,4 +1,4 @@
-﻿---
+---
 external help file: PSSAToJunit-help.xml
 Module Name: PSSAToJunit
 online version: https://github.com/tonylea/PSSAToJunit/blob/main/docs/Export-PSSAJunitXml.md
@@ -12,11 +12,9 @@ The `Export-PSSAJunitXml` function exports the results of `ConvertTo-PSSAJunitXm
 
 ## SYNTAX
 
-<!-- markdownlint-disable MD040 -->
 ```
 Export-PSSAJunitXml [-InputXml] <XmlDocument> [[-FilePath] <FileInfo>] [<CommonParameters>]
 ```
-<!-- markdownlint-enable MD040 -->
 
 ## DESCRIPTION
 The `Export-PSSAJunitXml` function exports the results of `ConvertTo-PSSAJunitXml` to a file.
@@ -83,9 +81,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### System.Xml.XmlDocument
 ## OUTPUTS
 
-<!-- markdownlint-disable MD024 -->
 ### System.Xml.XmlDocument
-<!-- markdownlint-enable MD024 -->
 ## NOTES
 
 ## RELATED LINKS

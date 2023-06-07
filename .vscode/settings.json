@@ -8,10 +8,15 @@
       "indent": 2
     },
     "MD013": false,
+    "MD024": {
+      "allow_different_nesting": true
+    },
+    "MD025": false,
     "MD026": {
       "punctuation": ".,;:!。，；:"
     },
     "MD029": false,
-    "MD033": false
+    "MD033": false,
+    "MD040": false
   }
 }

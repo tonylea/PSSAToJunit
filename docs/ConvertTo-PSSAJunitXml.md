@@ -1,4 +1,4 @@
-﻿---
+---
 external help file: PSSAToJunit-help.xml
 Module Name: PSSAToJunit
 online version: https://github.com/tonylea/PSSAToJunit/blob/main/docs/ConvertTo-PSSAJunitXml.md
@@ -12,12 +12,10 @@ Converts PSScriptAnalyzer results to JUnit XML format.
 
 ## SYNTAX
 
-<!-- markdownlint-disable MD040 -->
 ```
 ConvertTo-PSSAJunitXml [-PSScriptAnalyzerResult] <DiagnosticRecord[]> [[-TestName] <String>]
  [[-Severity] <String[]>] [<CommonParameters>]
 ```
-<!-- markdownlint-enable MD040 -->
 
 ## DESCRIPTION
 The `ConvertTo-PSSAJunitXml` function converts the results of PSScriptAnalyzer to JUnit XML format.
