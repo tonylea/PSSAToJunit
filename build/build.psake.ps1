@@ -43,6 +43,8 @@ Properties {
 Task Init {
     Write-Host "$Lines`n"
 
+    Set-ErrorAction -ErrorAction Stop
+
     Set-Location $ProjectRoot
     "Build System Details:"
     Get-Item ENV:BH*
@@ -109,23 +111,13 @@ Task IntegrationTests -Depends Init {
 Task UpdateExternalHelpFile -Depends Init {
     $lines
 
-
-
-    $NewExternalHelpArgs = @{
-        Path       = Join-Path -Path $ProjectRoot -ChildPath docs
-        OutputPath = Join-Path -Path $StagingModulePath -ChildPath en-US
-    }
-    New-ExternalHelp @NewExternalHelpArgs
+    Update-MarkdownHelpModule -Path $ExternalHelpFolder -RefreshModulePage
 }
 
-$OutputFolder = $ExternalHelpFolder
-$parameters = @{
-    Module                = $env:BHProjectName
-    OutputFolder          = $OutputFolder
-    AlphabeticParamsOrder = $true
-    WithModulePage        = $true
-    ExcludeDontShow       = $true
-    Encoding              = [System.Text.Encoding]::UTF8
+Task GetVersion -depends Init {
+    $lines
+
+    npm install
+    npm run release -- --skip
+
 }
-New-MarkdownHelp @parameters
-New-MarkdownAboutHelp -OutputFolder $OutputFolder -AboutName "Publishing_test_results_to_Azure_Devops.md"
