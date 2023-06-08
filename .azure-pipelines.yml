@@ -45,4 +45,3 @@ stages:
   - template: ./.ci/stage-build-deploy.yml
     parameters:
       vmLinuxImage: $(vmLinuxImage)
-      vmMacosImage: $(vmMacosImage)

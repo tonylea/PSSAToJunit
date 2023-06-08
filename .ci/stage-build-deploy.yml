@@ -1,18 +1,16 @@
 parameters:
   - name: vmLinuxImage
     type: string
-  - name: vmMacosImage
-    type: string
 
 stages:
   - stage: buildDeploy
     displayName: Build & Deploy
+    pool:
+      vmImage: ${{ parameters.vmLinuxImage }}
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     jobs:
       - job: build
         displayName: Build module
-        pool:
-          vmImage: ${{ parameters.vmMacosImage }}
         steps:
           - pwsh: |
               $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
@@ -81,8 +79,6 @@ stages:
         displayName: Deploy to PSGalley
         dependsOn: build
         condition: succeeded()
-        pool:
-          vmImage: ${{ parameters.vmLinuxImage }}
         steps:
           - task: DownloadPipelineArtifact@2
             inputs:

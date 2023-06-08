@@ -116,7 +116,16 @@ Task IntegrationTests -Depends Init {
 Task UpdateExternalHelpFile -Depends Init {
     Write-Host "`n$Lines`n"
 
+    Write-Output "Importing module from '$ManifestPath'"
     Import-Module -Name $ManifestPath -Force
+
+    Write-Output "Confirming exported functions for module '$ModuleName'"
+    $ExportedFunctions = (Get-Module -Name $ModuleName).ExportedCommands.Values.Name
+    foreach ($ExportedFunction in $ExportedFunctions) {
+        Write-Output "- Function name: $ExportedFunction"
+    }
+
+    Write-Output "Updating external help file for module '$ModuleName'"
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
 }
 
