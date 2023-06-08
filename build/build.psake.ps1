@@ -133,7 +133,7 @@ Task UpdateChangeLog -Depends UpdateExternalHelpFile {
     npm run release -- --skip.commit --skip.tag --skip.changelog
 }
 
-Task BumpVersion -Depends UpdateChangeLog ConfigGit {
+Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
     $lines
 
     npm install
