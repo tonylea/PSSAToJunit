@@ -1,7 +1,7 @@
 {
   "name": "pssatojunit",
   "private": "true",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tonylea/PSSAToJunit.git"
@@ -28,6 +28,8 @@
     "release": "standard-version",
     "upgrade": "ncu -u && npm install",
     "update": "npm run upgrade",
+    "version-bump": "npm run release -- --skip.commit --skip.tag --skip.changelog",
+    "update-changelog": "npm run release -- --skip.commit --skip.tag --skip.bump",
     "commit": "git-cz",
     "markdown-link-check": "markdown-link-check --config ./markdown-link-check-config.json",
     "secretlint": "secretlint '**/*'",

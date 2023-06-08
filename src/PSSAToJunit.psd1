@@ -1,6 +1,6 @@
 @{
     RootModule           = "PSSAToJunit.psm1"
-    ModuleVersion        = "1.0.0"
+    ModuleVersion        = "0.0.0"
     CompatiblePSEditions = @("Core")
     GUID                 = "fa5b675c-f181-4571-bda8-2b24da71d04b"
     Author               = "Tony Lea"

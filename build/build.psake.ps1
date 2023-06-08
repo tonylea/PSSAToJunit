@@ -1,4 +1,3 @@
-# PSake makes variables declared here available in other scriptblocks
 Properties {
     $ProjectRoot = $ENV:BHProjectPath
     if (-not $ProjectRoot) { $ProjectRoot = $PSScriptRoot }
@@ -8,6 +7,12 @@ Properties {
 
     $ModulePath = $ENV:BHPSModulePath
     if (-not $ModulePath) { $ModulePath = Join-Path -Path $ProjectRoot -ChildPath src }
+
+    $ModuleName = $ENV:BHProjectName
+    if (-not $ModuleName) { $ModuleName = "PSSAToJunit" }
+
+    $ManifestPath = $env:BHPSModuleManifest
+    if (-not $ManifestPath) { $ManifestPath = Join-Path -Path $ProjectRoot -ChildPath src -AdditionalChildPath "PSSAToJunti.psd1" }
 
     $OperatingSystem
     if (-not $OperatingSystem) {
@@ -30,8 +35,8 @@ Properties {
         $IntegrationTestsFolder = Join-Path -Path $ProjectRoot -ChildPath "tests" -AdditionalChildPath "integration-tests"
     }
 
-    if (-not $ExternalHelpFolder) {
-        $ExternalHelpFolder = Join-Path -Path $ProjectRoot -ChildPath "docs"
+    if (-not $DocsHelpFolder) {
+        $DocsHelpFolder = Join-Path -Path $ProjectRoot -ChildPath "docs"
     }
 
     $Lines
@@ -64,11 +69,11 @@ Task UnitTests -Depends Init {
             Enabled       = $true
             OutputFormat  = "JUnitXml"
             OutputPath    = Join-Path -Path $TestResultsFolder -ChildPath "$OperatingSystem-unit-tests.xml"
-            TestSuiteName = "Unit_Tests_$OperatingSystem" # default
+            TestSuiteName = "Unit_Tests_$OperatingSystem"
         }
         CodeCoverage = @{
             Enabled      = $true
-            OutputFormat = "JaCoCo" # default
+            OutputFormat = "JaCoCo"
             OutputPath   = Join-Path -Path $TestResultsFolder -ChildPath "$OperatingSystem-code-coverage.xml"
             Path         = @(
                 (Join-Path -Path $ModulePath -ChildPath classes)
@@ -97,7 +102,7 @@ Task IntegrationTests -Depends Init {
             Enabled       = $true
             OutputFormat  = "JUnitXml"
             OutputPath    = Join-Path -Path $TestResultsFolder -ChildPath "$OperatingSystem-integration-tests.xml"
-            TestSuiteName = "Integration_$OperatingSystem" # default
+            TestSuiteName = "Integration_$OperatingSystem"
         }
         Output     = @{
             Verbosity = "Normal"
@@ -111,13 +116,103 @@ Task IntegrationTests -Depends Init {
 Task UpdateExternalHelpFile -Depends Init {
     $lines
 
-    Update-MarkdownHelpModule -Path $ExternalHelpFolder -RefreshModulePage
+    Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
 }
 
-Task GetVersion -depends Init {
+Task UpdateChangeLog -Depends UpdateExternalHelpFile {
     $lines
 
     npm install
-    npm run release -- --skip
+    npm run release -- --skip.commit --skip.tag --skip.changelog
+}
 
+Task BumpVersion -Depends UpdateChangeLog {
+    $lines
+
+    npm install
+    npm run release -- --skip.commit --skip.tag --skip.changelog
+
+    $PackageJsonPath = Join-Path -Path $ProjectRoot -ChildPath "package.json"
+    git add $PackageJsonPath
+
+    $PackageJson = Get-Content -Path $PackageJsonPath | ConvertFrom-Json
+    $Version = $PackageJson.version
+    Update-ModuleManifest -Path $ManifestPath -ModuleVersion $Version
+    git add $ManifestPath
+
+    $PackageLockJsonPath = Join-Path -Path $ProjectRoot -ChildPath "package-lock.json"
+    git add $PackageLockJsonPath
+
+    $ChangelogPath = Join-Path -Path $ProjectRoot -ChildPath "CHANGELOG.md"
+    git add $ChangelogPath
+
+
+    $GitMessage = "chore(release): $Version [skip ci]"
+
+    # git commit -m $GitMessage
+    # git tag -a v$Version -m $GitMessage
+
+    # Set the version as an output variable
+    Write-Output "##vso[task.setvariable variable=version;]$Version"
+}
+
+Task CreateNuspecFile -depends Init {
+    $Lines
+
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
+    New-Item -Path $StagingFolder -ItemType 'Directory' -Force
+
+    $OutputPath = Join-Path -Path $StagingFolder -ChildPath "$ModuleName.nuspec"
+
+    $ManifestHash = Import-PowerShellDataFile -Path $ManifestPath
+    $Author = $ManifestHash.Author
+    $Description = $ManifestHash.Description
+    $Version = $ManifestHash.ModuleVersion
+
+    $NuSpec = [System.Xml.XmlDocument]@"
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>$ModuleName</id>
+        <version>$Version</version>
+        <authors>$Author</authors>
+        <description>$Description</description>
+    </metadata>
+</package>
+"@
+
+    $NuSpec.Save($OutputPath)
+}
+
+Task CreateExternalHelp -Depends CreateNuspecFile {
+    $lines
+
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
+    New-Item -Path $StagingFolder -ItemType 'Directory' -Force
+
+    $ExternalHelpFolder = Join-Path -Path $StagingFolder -AdditionalChildPath "en-GB"
+    New-ExternalHelp -Path $DocsHelpFolder -OutputPath $ExternalHelpFolder
+}
+
+Task BuildPackage -Depends CreateExternalHelp {
+    $lines
+
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
+    New-Item -Path $StagingFolder -ItemType 'Directory' -Force
+
+    $ClassesFolder = Join-Path -Path $ModulePath -ChildPath "classes" -AdditionalChildPath "*.ps1"
+    $Classes = @( Get-ChildItem -Path $ClassesFolder -ErrorAction SilentlyContinue )
+
+    $PrivateFolder = Join-Path -Path $ModulePath -ChildPath "private" -AdditionalChildPath "*.ps1"
+    $Private = @( Get-ChildItem -Path $PrivateFolder -ErrorAction SilentlyContinue )
+
+    $PublicFolder = Join-Path -Path $ModulePath -ChildPath "public" -AdditionalChildPath "*.ps1"
+    $Public = @( Get-ChildItem -Path $PublicFolder -ErrorAction SilentlyContinue )
+
+    $CombinedFunctionsPath = Join-Path -Path $StagingFolder -ChildPath "$ModuleName.psm1"
+    foreach ($File in @($Public + $Private + $Classes)) {
+        $File | Get-Content | Add-Content -Path $CombinedFunctionsPath
+    }
+
+    Copy-Item -Path $ManifestPath -Destination $StagingFolder
 }
