@@ -75,27 +75,27 @@ stages:
             displayName: clean build cache
             workingDirectory: $(System.DefaultWorkingDirectory)
 
-        - job: deploy
-          displayName: Deploy to PSGalley
-          dependsOn: build
-          condition: succeeded()
-          steps:
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                buildType: 'current'
-                artifactName: 'ModuleArchive'
-                itemPattern: '**'
-                targetPath: '$(Pipeline.Workspace)'
+      - job: deploy
+        displayName: Deploy to PSGalley
+        dependsOn: build
+        condition: succeeded()
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              artifactName: 'ModuleArchive'
+              itemPattern: '**'
+              targetPath: '$(Pipeline.Workspace)'
 
-            # extract the archive
-            - task: ExtractFiles@1
-              inputs:
-                archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
-                destinationFolder: '$(Pipeline.Workspace)/$(Build.BuildId)'
+          # extract the archive
+          - task: ExtractFiles@1
+            inputs:
+              archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
+              destinationFolder: '$(Pipeline.Workspace)/$(Build.BuildId)'
 
-            # see file strcuture
-            - pwsh: |
-                Get-ChildItem -Path $(Pipeline.Workspace)/$(Build.BuildId) -Recurse
-              displayName: see file structure
+          # see file strcuture
+          - pwsh: |
+              Get-ChildItem -Path $(Pipeline.Workspace)/$(Build.BuildId) -Recurse
+            displayName: see file structure
 
-            # publish to PSGallery
+          # publish to PSGallery
