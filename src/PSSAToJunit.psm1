@@ -1,7 +1,12 @@
 #Get public and private function definition files.
-$Classes = @( Get-ChildItem -Path $PSScriptRoot\Classes\*.ps1 -ErrorAction SilentlyContinue )
-$Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
-$Public = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
+$ClassesPath = Join-Path -Path $PSScriptRoot -ChildPath "Classes" -AdditionalChildPath "*.ps1"
+$Classes = @( Get-ChildItem -Path $ClassesPath -ErrorAction SilentlyContinue )
+
+$PrivatePath = Join-Path -Path $PSScriptRoot -ChildPath "Private" -AdditionalChildPath "*.ps1"
+$Private = @( Get-ChildItem -Path $PrivatePath -ErrorAction SilentlyContinue )
+
+$PublicPath = Join-Path -Path $PSScriptRoot -ChildPath "Public" -AdditionalChildPath "*.ps1"
+$Public = @( Get-ChildItem -Path $PublicPath -ErrorAction SilentlyContinue )
 
 #Dot source the files
 Foreach ($import in @($Classes + $Private + $Public)) {
