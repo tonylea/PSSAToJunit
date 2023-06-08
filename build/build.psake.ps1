@@ -57,7 +57,7 @@ Task Init {
     Write-Host "`n"
 }
 
-ConfigGit {
+Task ConfigGit {
     Write-Host "$Lines`n"
 
     git config --global user.email "bot@dev.azure.com"
