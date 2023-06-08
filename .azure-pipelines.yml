@@ -41,7 +41,8 @@ stages:
       vmMacosImage: $(vmMacosImage)
       vmWindowsImage: $(vmWindowsImage)
 
-  # Build & Deploy
+    # Build & Deploy
   - template: ./.ci/stage-build-deploy.yml
     parameters:
       vmLinuxImage: $(vmLinuxImage)
+      vmMacosImage: $(vmMacosImage)
