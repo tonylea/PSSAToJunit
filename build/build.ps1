@@ -13,7 +13,7 @@ param (
     $ImportProjectModule,
 
     [Parameter(Mandatory)]
-    [ValidateSet("UnitTests", "IntegrationTests", "UpdateExternalHelpFile", "UpdateChangeLog")]
+    [ValidateSet("UnitTests", "IntegrationTests", "BumpVersion", "BuildPackage")]
     [System.String]
     $Task,
 
