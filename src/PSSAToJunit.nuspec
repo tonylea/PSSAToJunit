@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<package>
-    <metadata>
-        <id>PSSAToJunit</id>
-        <version>$VERSIONHERE$</version>
-        <authors>Tony Lea</authors>
-        <description>Convert PSScriptAnalyzer results to JUnit</description>
-    </metadata>
-</package>

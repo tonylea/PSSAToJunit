@@ -42,7 +42,7 @@ if ($ResolveDependency.IsPresent) {
     }
 
     # Install build dependencies
-    $DependencyConfigPath = Join-Path -Path $PSScriptRoot -ChildPath "dependancies.psd1"
+    $DependencyConfigPath = Join-Path -Path $PSScriptRoot -ChildPath "dependencies.psd1"
     Write-Host "`n  Resolving module dependencies from $DependencyConfigPath"
     Import-Module -Name "PSDepend"
     $InvokePSDependArgs = @{

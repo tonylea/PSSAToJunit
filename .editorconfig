@@ -24,10 +24,6 @@ indent_size = 2
 [.cspell.json]
 indent_size = 4
 
-# Markdown
-[*.md]
-indent_size = 2
-
 # Javasvript
 [*.js]
 indent_size = 2

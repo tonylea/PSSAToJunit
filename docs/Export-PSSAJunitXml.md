@@ -1,7 +1,7 @@
 ---
 external help file: PSSAToJunit-help.xml
 Module Name: PSSAToJunit
-online version: https://github.com/tonylea/PSSAToJunit/blob/main/docs/Export-PSSAJunitXml.md
+online version: TBA
 schema: 2.0.0
 ---
 
@@ -18,7 +18,7 @@ Export-PSSAJunitXml [-InputXml] <XmlDocument> [[-FilePath] <FileInfo>] [<CommonP
 
 ## DESCRIPTION
 The `Export-PSSAJunitXml` function exports the results of `ConvertTo-PSSAJunitXml` to a file.
-It accepts the JunitXml object as either a specified parameter or throuigh the pipeline.
+It accepts the JunitXml object as either a specified parameter or through the pipeline.
 
 If no filepath is specified, the function will export the JunitXml object to the current directory with the name `PSScriptAnalyzerResults.xml`.
 

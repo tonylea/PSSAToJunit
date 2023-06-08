@@ -1,7 +1,7 @@
 ---
 external help file: PSSAToJunit-help.xml
 Module Name: PSSAToJunit
-online version: https://github.com/tonylea/PSSAToJunit/blob/main/docs/ConvertTo-PSSAJunitXml.md
+online version: TBA
 schema: 2.0.0
 ---
 
