@@ -57,6 +57,13 @@ Task Init {
     Write-Host "`n"
 }
 
+ConfigGit {
+    Write-Host "$Lines`n"
+
+    git config --global user.email "bot@dev.azure.com"
+    git config --global user.name "Build Agent"
+}
+
 Task UnitTests -Depends Init {
     Write-Host "`n$Lines`n"
 
@@ -126,7 +133,7 @@ Task UpdateChangeLog -Depends UpdateExternalHelpFile {
     npm run release -- --skip.commit --skip.tag --skip.changelog
 }
 
-Task BumpVersion -Depends UpdateChangeLog {
+Task BumpVersion -Depends UpdateChangeLog ConfigGit {
     $lines
 
     npm install
@@ -187,7 +194,7 @@ Task CreateExternalHelp -Depends CreateNuspecFile {
     $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
 
-    $ExternalHelpFolder = Join-Path -Path $StagingFolder -AdditionalChildPath "en-GB"
+    $ExternalHelpFolder = Join-Path -Path $StagingFolder -ChildPath "en-GB"
     New-ExternalHelp -Path $DocsHelpFolder -OutputPath $ExternalHelpFolder
 }
 
