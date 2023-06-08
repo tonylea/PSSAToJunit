@@ -113,21 +113,27 @@ Task IntegrationTests -Depends Init {
     Write-Host "`n"
 }
 
-Task UpdateExternalHelpFile -Depends Init {
-    $lines
+Task ImportModuleToScope -Depends Init {
+    Write-Host "`n$Lines`n"
+
+    Import-Module -Name $ManifestPath -Force
+}
+
+Task UpdateExternalHelpFile -Depends ImportModuleToScope {
+    Write-Host "`n$Lines`n"
 
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
 }
 
 Task UpdateChangeLog -Depends UpdateExternalHelpFile {
-    $lines
+    Write-Host "`n$Lines`n"
 
     npm install
     npm run release -- --skip.commit --skip.tag --skip.changelog
 }
 
 Task BumpVersion -Depends UpdateChangeLog {
-    $lines
+    Write-Host "`n$Lines`n"
 
     npm install
     npm run release -- --skip.commit --skip.tag --skip.changelog
