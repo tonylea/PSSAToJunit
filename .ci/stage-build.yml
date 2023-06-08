@@ -6,7 +6,7 @@ stages:
   - stage: buildDeploy
     displayName: Build & Deploy
     pool:
-      vmImage: ${{ parameters.vmLinuxImage }}}
+      vmImage: ${{ parameters.vmLinuxImage }}
     dependsOn: integrationTests
     condition: |
       and(
