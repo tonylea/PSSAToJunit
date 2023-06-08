@@ -13,7 +13,7 @@ function Export-PSSAJunitXml {
 
     begin {
         if (!$FilePath) {
-            $FilePath = Join-Path -Path $PWD -ChildPath "PSScriptAnalyzer.xml"
+            $FilePath = Join-Path -Path $PWD -ChildPath "PSScriptAnalyzerResults.xml"
         }
     }
 

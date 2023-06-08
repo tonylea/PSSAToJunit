@@ -17,6 +17,7 @@
         ".vscode/**",
         "build/**",
         "helpers/**",
+        "megalinter-reports/**",
         "utils/**",
         "commitlint.config.js",
         "conventionalCommit.json",

@@ -5,6 +5,7 @@ variables:
   testsPath: $(System.DefaultWorkingDirectory)/tests
   testResultsPath: $(System.DefaultWorkingDirectory)/test-results
   srcFolder: $(System.DefaultWorkingDirectory)/src
+  docsFolder: $(System.DefaultWorkingDirectory)/docs
   # markdownlintCliVersion: "0.7.1"
   # psScriptAnalyzerVersion: "1.21.0"
   megaLinterFlavour: "megalinter-documentation"

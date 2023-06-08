@@ -23,7 +23,7 @@ steps:
       ROOT_FOLDER: $(System.DefaultWorkingDirectory)
       BUILD_FOLDER_NAME: build
       BUILD_FILENAME: build.ps1
-      DEPENDANCY_FILENAME: dependancies.psd1
+      DEPENDANCY_FILENAME: dependencies.psd1
     displayName: Pester tests
     workingDirectory: $(System.DefaultWorkingDirectory)
 

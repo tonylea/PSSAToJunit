@@ -131,6 +131,7 @@ ScriptAnalyzerResult.xml
 temp-files/
 test-results/
 megalinter-reports/
+staging/
 
 ###############################################
 # MacOS                                       #

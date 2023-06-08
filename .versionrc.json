@@ -1,14 +1,6 @@
 {
   "types": [
     {
-      "type": "feat",
-      "section": "Features"
-    },
-    {
-      "type": "fix",
-      "section": "Bug Fixes"
-    },
-    {
       "type": "chore",
       "hidden": true
     },
@@ -18,7 +10,15 @@
     },
     {
       "type": "docs",
-      "hidden": true
+      "section": "Documentation"
+    },
+    {
+      "type": "feat",
+      "section": "Features"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes"
     },
     {
       "type": "perf",
@@ -26,10 +26,6 @@
     },
     {
       "type": "refactor",
-      "hidden": true
-    },
-    {
-      "type": "release",
       "hidden": true
     },
     {
@@ -45,7 +41,5 @@
       "hidden": true
     }
   ],
-  "releaseCommitMessageFormat": "release({{currentTag}}): bump version",
-  "commitUrlFormat": "https://github.com/tonylea/PsModuleScaffolding/commits/{{hash}}",
-  "compareUrlFormat": "https://github.com/tonylea/PsModuleScaffolding/compare/{{previousTag}}...{{currentTag}}"
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]"
 }
