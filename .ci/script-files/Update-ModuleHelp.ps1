@@ -11,7 +11,7 @@ param (
 )
 
 Write-Output "Importing module from '$ManifestPath'"
-Import-Module -Name $ManifestPath -Force -Scope Local -ErrorAction Stop
+Import-Module -Name $ManifestPath -Force -Scope Local -ErrorAction Stop -Verbose
 
 Write-Output "Confirming exported functions for module '$ModuleName'"
 $ExportedFunctions = (Get-Module -Name $ModuleName).ExportedCommands.Values.Name
