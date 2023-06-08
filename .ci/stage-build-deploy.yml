@@ -13,108 +13,89 @@ stages:
         displayName: Build module
         steps:
           - pwsh: |
-              $ErrorActionPreference = 'Stop'
+              $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
+              $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
+              $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
 
-              . $env:RESOLVE_DEPENDENCY_SCRIPTPATH -DependencyConfigPath $env:DEPENDANCY_CONFIG_FILEPATH
+              Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
 
-              Write-Host "`nSTARTED TASK: Set environmental variables" -ForegroundColor Blue
-              Set-BuildEnvironment -Force
-
-              # run Update-ModuleHelp
-              . $env:UPDATE_MODULE_HELP_SCRIPTPATH -ManifestPath $env:MANIFEST_FILEPATH -ModuleName $env:MODULE_NAME -DocsPath $env:DOCS_FOLDERPATH
+              $BuildScriptPathArgs = @{
+                ResolveDependency    = $true
+                DependencyConfigPath = $DependancyConfigPath
+                Task                 = "BumpVersion"
+                ImportProjectModule  = $true
+              }
+              . $BuildScriptPath @BuildScriptPathArgs
             env:
-              RESOLVE_DEPENDENCY_SCRIPTPATH: $(System.DefaultWorkingDirectory)/.ci/script-files/Resolve-Dependency.ps1
-              DEPENDANCY_CONFIG_FILEPATH: $(System.DefaultWorkingDirectory)/build/dependencies.psd1
-              UPDATE_MODULE_HELP_SCRIPTPATH: $(System.DefaultWorkingDirectory)/.ci/script-files/Update-ModuleHelp.ps1
-              MANIFEST_FILEPATH: $(System.DefaultWorkingDirectory)/src/PSSAToJunit.psd1
-              MODULE_NAME: PSSAToJunit
-              DOCS_FOLDERPATH: $(System.DefaultWorkingDirectory)/docs
+              ROOT_FOLDER: $(System.DefaultWorkingDirectory)
+              BUILD_FOLDER_NAME: build
+              BUILD_FILENAME: build.ps1
+              DEPENDANCY_FILENAME: dependencies.psd1
             displayName: run platyPS
             workingDirectory: $(System.DefaultWorkingDirectory)
-      #     - pwsh: |
-      #         $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
-      #         $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
-      #         $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
 
-      #         Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
+          - pwsh: |
+              $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
+              $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
+              $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
 
-      #         $BuildScriptPathArgs = @{
-      #           ResolveDependency    = $true
-      #           DependencyConfigPath = $DependancyConfigPath
-      #           Task                 = "BumpVersion"
-      #           ImportProjectModule  = $true
-      #         }
-      #         . $BuildScriptPath @BuildScriptPathArgs
-      #       env:
-      #         ROOT_FOLDER: $(System.DefaultWorkingDirectory)
-      #         BUILD_FOLDER_NAME: build
-      #         BUILD_FILENAME: build.ps1
-      #         DEPENDANCY_FILENAME: dependencies.psd1
-      #       displayName: run platyPS
-      #       workingDirectory: $(System.DefaultWorkingDirectory)
+              Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
 
-      #     - pwsh: |
-      #         $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
-      #         $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
-      #         $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
+              $BuildScriptPathArgs = @{
+                ResolveDependency    = $true
+                DependencyConfigPath = $DependancyConfigPath
+                Task                 = "BuildPackage"
+                ImportProjectModule  = $true
+              }
+              . $BuildScriptPath @BuildScriptPathArgs
+            env:
+              ROOT_FOLDER: $(System.DefaultWorkingDirectory)
+              BUILD_FOLDER_NAME: build
+              BUILD_FILENAME: build.ps1
+              DEPENDANCY_FILENAME: dependencies.psd1
+            displayName: build package
+            workingDirectory: $(System.DefaultWorkingDirectory)
 
-      #         Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/staging'
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
 
-      #         $BuildScriptPathArgs = @{
-      #           ResolveDependency    = $true
-      #           DependencyConfigPath = $DependancyConfigPath
-      #           Task                 = "BuildPackage"
-      #           ImportProjectModule  = $true
-      #         }
-      #         . $BuildScriptPath @BuildScriptPathArgs
-      #       env:
-      #         ROOT_FOLDER: $(System.DefaultWorkingDirectory)
-      #         BUILD_FOLDER_NAME: build
-      #         BUILD_FILENAME: build.ps1
-      #         DEPENDANCY_FILENAME: dependencies.psd1
-      #       displayName: build package
-      #       workingDirectory: $(System.DefaultWorkingDirectory)
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+              ArtifactName: 'ModuleArchive'
+              publishLocation: 'Container'
 
-      #     - task: ArchiveFiles@2
-      #       inputs:
-      #         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/staging'
-      #         archiveType: 'zip'
-      #         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+          - pwsh: |
+              Remove-Item -Recurse -Force $env:STAGING_DIR
+            env:
+              STAGING_DIR: $(System.DefaultWorkingDirectory)/staging
+            displayName: clean build cache
+            workingDirectory: $(System.DefaultWorkingDirectory)
 
-      #     - task: PublishBuildArtifacts@1
-      #       inputs:
-      #         PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-      #         ArtifactName: 'ModuleArchive'
-      #         publishLocation: 'Container'
+      - job: deploy
+        displayName: Deploy to PSGalley
+        dependsOn: build
+        condition: succeeded()
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'current'
+              artifactName: 'ModuleArchive'
+              itemPattern: '**'
+              targetPath: '$(Pipeline.Workspace)'
 
-      #     - pwsh: |
-      #         Remove-Item -Recurse -Force $env:STAGING_DIR
-      #       env:
-      #         STAGING_DIR: $(System.DefaultWorkingDirectory)/staging
-      #       displayName: clean build cache
-      #       workingDirectory: $(System.DefaultWorkingDirectory)
+          # extract the archive
+          - task: ExtractFiles@1
+            inputs:
+              archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
+              destinationFolder: '$(Pipeline.Workspace)/$(Build.BuildId)'
 
-      # - job: deploy
-      #   displayName: Deploy to PSGalley
-      #   dependsOn: build
-      #   condition: succeeded()
-      #   steps:
-      #     - task: DownloadPipelineArtifact@2
-      #       inputs:
-      #         buildType: 'current'
-      #         artifactName: 'ModuleArchive'
-      #         itemPattern: '**'
-      #         targetPath: '$(Pipeline.Workspace)'
+          # see file strcuture
+          - pwsh: |
+              Get-ChildItem -Path $(Pipeline.Workspace)/$(Build.BuildId) -Recurse
+            displayName: see file structure
 
-      #     # extract the archive
-      #     - task: ExtractFiles@1
-      #       inputs:
-      #         archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
-      #         destinationFolder: '$(Pipeline.Workspace)/$(Build.BuildId)'
-
-      #     # see file strcuture
-      #     - pwsh: |
-      #         Get-ChildItem -Path $(Pipeline.Workspace)/$(Build.BuildId) -Recurse
-      #       displayName: see file structure
-
-      #     # publish to PSGallery
+          # publish to PSGallery

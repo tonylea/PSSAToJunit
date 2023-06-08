@@ -114,34 +114,20 @@ Task IntegrationTests -Depends Init {
 }
 
 Task UpdateExternalHelpFile -Depends Init {
-    Write-Host "`n$Lines`n"
+    $lines
 
-    Write-Output "Importing module from '$ManifestPath'"
-    Import-Module -Name $ManifestPath -Force -Scope Local -ErrorAction Stop
-
-    Write-Output "Confirming exported functions for module '$ModuleName'"
-    $ExportedFunctions = (Get-Module -Name $ModuleName).ExportedCommands.Values.Name
-    if (!$ExportedFunctions) {
-        Write-Output "No exported functions found for module '$ModuleName'"
-        throw "No exported functions found for module '$ModuleName'"
-    }
-    foreach ($ExportedFunction in $ExportedFunctions) {
-        Write-Output "- Function name: $ExportedFunction"
-    }
-
-    Write-Output "Updating external help file for module '$ModuleName'"
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
 }
 
 Task UpdateChangeLog -Depends UpdateExternalHelpFile {
-    Write-Host "`n$Lines`n"
+    $lines
 
     npm install
     npm run release -- --skip.commit --skip.tag --skip.changelog
 }
 
 Task BumpVersion -Depends UpdateChangeLog {
-    Write-Host "`n$Lines`n"
+    $lines
 
     npm install
     npm run release -- --skip.commit --skip.tag --skip.changelog
