@@ -7,15 +7,10 @@ stages:
     displayName: Build & Deploy
     pool:
       vmImage: ${{ parameters.vmLinuxImage }}
-    dependsOn: integrationTests
-    condition: |
-      and(
-        succeeded(),
-        eq(variables['Build.SourceBranch'], 'refs/heads/main')
-      )
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     jobs:
-      - job: BumpVersion
-        displayName: Bump version
+      - job: build
+        displayName: Build module
         steps:
           - pwsh: |
               $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
@@ -61,14 +56,46 @@ stages:
             displayName: build package
             workingDirectory: $(System.DefaultWorkingDirectory)
 
-          - task: NuGetCommand@2
+          - task: ArchiveFiles@2
             inputs:
-              command: 'pack'
-              packagesToPack: '$(System.DefaultWorkingDirectory)/staging/compiled.nuspec'
-              versioningScheme: off
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/staging'
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'NuGetPackage'
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+              ArtifactName: 'ModuleArchive'
               publishLocation: 'Container'
+
+          - pwsh: |
+              Remove-Item -Recurse -Force $env:STAGING_DIR
+            env:
+              STAGING_DIR: $(System.DefaultWorkingDirectory)/staging
+            displayName: clean build cache
+            workingDirectory: $(System.DefaultWorkingDirectory)
+
+        - job: deploy
+          displayName: Deploy to PSGalley
+          dependsOn: build
+          condition: succeeded()
+          steps:
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'current'
+                artifactName: 'ModuleArchive'
+                itemPattern: '**'
+                targetPath: '$(Pipeline.Workspace)'
+
+            # extract the archive
+            - task: ExtractFiles@1
+              inputs:
+                archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
+                destinationFolder: '$(Pipeline.Workspace)/$(Build.BuildId)'
+
+            # see file strcuture
+            - pwsh: |
+                Get-ChildItem -Path $(Pipeline.Workspace)/$(Build.BuildId) -Recurse
+              displayName: see file structure
+
+            # publish to PSGallery
