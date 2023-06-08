@@ -1,5 +1,5 @@
 # PSSAToJunit
-## about_PPSSAToJunit
+## about_PSSAToJunit
 
 # SHORT DESCRIPTION
 Convert PSScriptAnalyzer results to JUnit
