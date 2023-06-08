@@ -130,14 +130,14 @@ Task UpdateChangeLog -Depends UpdateExternalHelpFile {
     $lines
 
     npm install
-    npm run release -- --skip.commit --skip.tag --skip.changelog
+    npm run update-changelog
 }
 
 Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
     $lines
 
     npm install
-    npm run release -- --skip.commit --skip.tag --skip.changelog
+    npm run version-bump
 
     $PackageJsonPath = Join-Path -Path $ProjectRoot -ChildPath "package.json"
     git add $PackageJsonPath
@@ -158,6 +158,7 @@ Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
 
     git commit -m $GitMessage
     git tag -a v$Version -m $GitMessage
+    git push origin main --tags
 }
 
 Task CreateNuspecFile -depends Init {
