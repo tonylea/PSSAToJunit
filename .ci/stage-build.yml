@@ -64,14 +64,14 @@ stages:
             displayName: build package
             workingDirectory: $(System.DefaultWorkingDirectory)
 
-            - task: NuGetCommand@2
-              inputs:
-                command: 'pack'
-                packagesToPack: '$(System.DefaultWorkingDirectory)/staging/compiled.nuspec'
-                versioningScheme: off
+          - task: NuGetCommand@2
+            inputs:
+              command: 'pack'
+              packagesToPack: '$(System.DefaultWorkingDirectory)/staging/compiled.nuspec'
+              versioningScheme: off
 
-            - task: PublishBuildArtifacts@1
-              inputs:
-                PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-                ArtifactName: 'NuGetPackage'
-                publishLocation: 'Container'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'NuGetPackage'
+              publishLocation: 'Container'
