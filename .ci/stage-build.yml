@@ -13,9 +13,6 @@ stages:
       )
     pool:
       vmImage: $(vmLinuxImage)
-    variables:
-      artifactName: pssatojunit
-      artifactPath: $(Build.ArtifactStagingDirectory)/pssatojunit
     jobs:
       - job: BumpVersion
         displayName: Bump version
@@ -42,36 +39,36 @@ stages:
             displayName: run platyPS
             workingDirectory: $(System.DefaultWorkingDirectory)
 
-          - pwsh: |
-              $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
-              $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
-              $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
+          # - pwsh: |
+          #     $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
+          #     $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
+          #     $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
 
-              Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
+          #     Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
 
-              $BuildScriptPathArgs = @{
-                ResolveDependency    = $true
-                DependencyConfigPath = $DependancyConfigPath
-                Task                 = "BuildPackage"
-                ImportProjectModule  = $true
-              }
-              . $BuildScriptPath @BuildScriptPathArgs
-            env:
-              ROOT_FOLDER: $(System.DefaultWorkingDirectory)
-              BUILD_FOLDER_NAME: build
-              BUILD_FILENAME: build.ps1
-              DEPENDANCY_FILENAME: dependancies.psd1
-            displayName: build package
-            workingDirectory: $(System.DefaultWorkingDirectory)
+          #     $BuildScriptPathArgs = @{
+          #       ResolveDependency    = $true
+          #       DependencyConfigPath = $DependancyConfigPath
+          #       Task                 = "BuildPackage"
+          #       ImportProjectModule  = $true
+          #     }
+          #     . $BuildScriptPath @BuildScriptPathArgs
+          #   env:
+          #     ROOT_FOLDER: $(System.DefaultWorkingDirectory)
+          #     BUILD_FOLDER_NAME: build
+          #     BUILD_FILENAME: build.ps1
+          #     DEPENDANCY_FILENAME: dependancies.psd1
+          #   displayName: build package
+          #   workingDirectory: $(System.DefaultWorkingDirectory)
 
-          - task: NuGetCommand@2
-            inputs:
-              command: 'pack'
-              packagesToPack: '$(System.DefaultWorkingDirectory)/staging/compiled.nuspec'
-              versioningScheme: off
+          # - task: NuGetCommand@2
+          #   inputs:
+          #     command: 'pack'
+          #     packagesToPack: '$(System.DefaultWorkingDirectory)/staging/compiled.nuspec'
+          #     versioningScheme: off
 
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'NuGetPackage'
-              publishLocation: 'Container'
+          # - task: PublishBuildArtifacts@1
+          #   inputs:
+          #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          #     ArtifactName: 'NuGetPackage'
+          #     publishLocation: 'Container'
