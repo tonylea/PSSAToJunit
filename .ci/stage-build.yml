@@ -5,14 +5,14 @@ parameters:
 stages:
   - stage: build & deploy
     displayName: Build & Deploy
-    dependsOn: [integrationTests]
+    pool:
+      vmImage: ${{ parameters.vmLinuxImage }}}
+    dependsOn: integrationTests
     condition: |
       and(
         succeeded(),
-        eq(variables["Build.SourceBranch"], "refs/heads/main"),
+        eq(variables['Build.SourceBranch'], 'refs/heads/main')
       )
-    pool:
-      vmImage: $(vmLinuxImage)
     jobs:
       - job: BumpVersion
         displayName: Bump version
