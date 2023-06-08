@@ -113,15 +113,10 @@ Task IntegrationTests -Depends Init {
     Write-Host "`n"
 }
 
-Task ImportModuleToScope -Depends Init {
+Task UpdateExternalHelpFile -Depends Init {
     Write-Host "`n$Lines`n"
 
     Import-Module -Name $ManifestPath -Force
-}
-
-Task UpdateExternalHelpFile -Depends ImportModuleToScope {
-    Write-Host "`n$Lines`n"
-
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
 }
 

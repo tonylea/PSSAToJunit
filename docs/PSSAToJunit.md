@@ -1,7 +1,7 @@
 ---
 Module Name: PSSAToJunit
 Module Guid: fa5b675c-f181-4571-bda8-2b24da71d04b
-online version: TBA
+Download Help Link: 
 Help Version: 0.0.0
 Locale: en-UK
 ---
