@@ -117,10 +117,14 @@ Task UpdateExternalHelpFile -Depends Init {
     Write-Host "`n$Lines`n"
 
     Write-Output "Importing module from '$ManifestPath'"
-    Import-Module -Name $ManifestPath -Force
+    Import-Module -Name $ManifestPath -Force -Scope Local
 
     Write-Output "Confirming exported functions for module '$ModuleName'"
     $ExportedFunctions = (Get-Module -Name $ModuleName).ExportedCommands.Values.Name
+    if (!$ExportedFunctions) {
+        Write-Error "No exported functions found for module '$ModuleName'"
+        return
+    }
     foreach ($ExportedFunction in $ExportedFunctions) {
         Write-Output "- Function name: $ExportedFunction"
     }
