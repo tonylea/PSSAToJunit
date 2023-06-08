@@ -3,7 +3,7 @@ parameters:
     type: string
 
 stages:
-  - stage: build & deploy
+  - stage: buildDeploy
     displayName: Build & Deploy
     pool:
       vmImage: ${{ parameters.vmLinuxImage }}}
