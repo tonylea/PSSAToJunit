@@ -48,7 +48,7 @@ Properties {
 Task Init {
     Write-Host "$Lines`n"
 
-    Set-ErrorAction -ErrorAction Stop
+    $ErrorActionPreference = "Stop"
 
     Set-Location $ProjectRoot
     "Build System Details:"
