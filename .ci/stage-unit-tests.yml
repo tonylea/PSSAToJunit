@@ -14,7 +14,11 @@ stages:
   - stage: unitTests
     displayName: Unit Tests
     dependsOn: [staticAnalysis]
-    condition: succeeded()
+    condition: |
+      and(
+        succeeded(),
+        ne(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
     jobs:
       - job: linuxUnitTests
         displayName: "Linux Tests"

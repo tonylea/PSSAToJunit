@@ -28,7 +28,7 @@ steps:
     workingDirectory: $(System.DefaultWorkingDirectory)
 
   - task: PublishTestResults@2
-    displayName: publish unit tests
+    displayName: publish integration tests
     condition: succeededOrFailed()
     inputs:
       testResultsFormat: "JUnit"

@@ -14,7 +14,11 @@ stages:
   - stage: integrationTests
     displayName: Integration Tests
     dependsOn: [unitTests]
-    condition: succeeded()
+    condition: |
+      and(
+        succeeded(),
+        ne(variables['Build.SourceBranch'], 'refs/heads/main')
+      )
     jobs:
       - job: linuxUnitTests
         displayName: "Linux"

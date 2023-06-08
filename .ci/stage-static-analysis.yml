@@ -15,6 +15,7 @@ parameters:
 stages:
   - stage: staticAnalysis
     displayName: Linting
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/main')
     pool:
       vmImage: ${{ parameters.vmImage }}
     jobs:
