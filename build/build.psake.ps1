@@ -149,11 +149,8 @@ Task BumpVersion -Depends UpdateChangeLog {
 
     $GitMessage = "chore(release): $Version [skip ci]"
 
-    # git commit -m $GitMessage
-    # git tag -a v$Version -m $GitMessage
-
-    # Set the version as an output variable
-    Write-Output "##vso[task.setvariable variable=version;]$Version"
+    git commit -m $GitMessage
+    git tag -a v$Version -m $GitMessage
 }
 
 Task CreateNuspecFile -depends Init {
