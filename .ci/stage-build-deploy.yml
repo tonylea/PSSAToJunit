@@ -107,6 +107,11 @@ stages:
 
           # publish to PSGallery
           - pwsh: |
+              $JoinPathArgs = @{
+                Path = $env:PIPELINE_WORKSPACE
+                ChildPath = $env:BUILD_BUILDID
+                AdditionalChildPath = @('staging', 'PSSAToJunit')
+              }
               $MODULE_PATH = Join-Path -Path $env:PIPELINE_WORKSPACE -ChildPath $env:BUILD_BUILDID -ChildPath 'staging'
               Write-Host "Publishing module from: $MODULE_PATH" -foregroundcolor cyan
 
