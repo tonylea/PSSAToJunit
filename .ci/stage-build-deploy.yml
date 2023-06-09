@@ -103,12 +103,13 @@ stages:
           - task: ExtractFiles@1
             inputs:
               archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
-              destinationFolder: '$(Pipeline.Workspace)/$(Build.BuildId)'
+              destinationFolder: $(System.DefaultWorkingDirectory)/deploy
 
           # publish to PSGallery
           - pwsh: |
+              $ModulePath = Join-Path -Path $env:DEPLOY_FOLDER -ChildPath PSSAToJunit
               $PublishModuleArgs = @{
-                Path        = $env:MODULE_PATH
+                Path        = $ModulePath
                 NuGetApiKey = $env:NUGET_KEY
                 Repository  = 'PSGallery'
                 Verbose     = $true
@@ -116,5 +117,6 @@ stages:
               Publish-Module @PublishModuleArgs
             env:
               NUGET_KEY: $(psgalleryApiKey)
-              MODULE_PATH: $(Pipeline.Workspace)/$(Build.BuildId)/PSSAToJunit
+              DEPLOY_FOLDER: $(System.DefaultWorkingDirectory)/deploy
+
             displayName: publish to PSGallery
