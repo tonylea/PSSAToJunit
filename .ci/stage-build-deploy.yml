@@ -38,6 +38,13 @@ stages:
             workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
+              git config --global user.email "bot@dev.azure.com"
+              git config --global user.name "Build Agent"
+
+              git push --follow-tags origin HEAD:$(Build.SourceBranchName)
+            displayName: push changes
+
+          - pwsh: |
               $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
               $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
               $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME

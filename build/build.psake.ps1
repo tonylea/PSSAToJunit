@@ -165,11 +165,6 @@ Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
     if ($LASTEXITCODE -ne 0) {
         Write-Error "An error occurred while running the 'git tag -a v$Version -m $GitMessage' command."
     }
-
-    git push origin main --tags
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "An error occurred while running the 'git push origin main --tags' command."
-    }
 }
 
 Task CreateNuspecFile -depends Init {
