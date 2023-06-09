@@ -170,7 +170,7 @@ Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
 Task CreateNuspecFile -depends Init {
     Write-Host "`n$Lines`n"
 
-    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath $ModuleName
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath "staging"
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
 
     $OutputPath = Join-Path -Path $StagingFolder -ChildPath "$ModuleName.nuspec"
@@ -198,7 +198,7 @@ Task CreateNuspecFile -depends Init {
 Task CreateExternalHelp -Depends CreateNuspecFile {
     Write-Host "`n$Lines`n"
 
-    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath $ModuleName
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath "staging"
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
 
     $ExternalHelpFolder = Join-Path -Path $StagingFolder -ChildPath "en-GB"
@@ -208,7 +208,7 @@ Task CreateExternalHelp -Depends CreateNuspecFile {
 Task BuildPackage -Depends CreateExternalHelp {
     Write-Host "`n$Lines`n"
 
-    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath $ModuleName
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath "staging"
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
 
     $ClassesFolder = Join-Path -Path $ModulePath -ChildPath "classes" -AdditionalChildPath "*.ps1"

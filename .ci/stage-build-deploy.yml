@@ -70,7 +70,7 @@ stages:
 
           - task: ArchiveFiles@2
             inputs:
-              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/PSSAToJunit'
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/staging'
               archiveType: 'zip'
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
 
@@ -103,7 +103,7 @@ stages:
           - task: ExtractFiles@1
             inputs:
               archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
-              destinationFolder:  '$(Pipeline.Workspace)/$(Build.BuildId)'
+              destinationFolder:  '$(Pipeline.Workspace)/$(Build.BuildId)/PSSAToJunit'
 
           # publish to PSGallery
           - pwsh: |
