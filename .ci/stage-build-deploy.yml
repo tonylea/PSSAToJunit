@@ -8,7 +8,7 @@ stages:
     pool:
       vmImage: ${{ parameters.vmLinuxImage }}
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-    varaibles:
+    variables:
       - group: 'PowerShellGallery'
     jobs:
       - job: build
