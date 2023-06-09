@@ -126,14 +126,7 @@ Task UpdateExternalHelpFile -Depends Init {
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
 }
 
-Task UpdateChangeLog -Depends UpdateExternalHelpFile {
-    Write-Host "`n$Lines`n"
-
-    npm install
-    npm run update-changelog
-}
-
-Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
+Task BumpVersion -Depends UpdateExternalHelpFile, ConfigGit {
     Write-Host "`n$Lines`n"
 
     npm install
@@ -144,15 +137,11 @@ Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
 
     $PackageJson = Get-Content -Path $PackageJsonPath | ConvertFrom-Json
     $Version = $PackageJson.version
+    Write-Host "Version: $Version"
+
     Update-ModuleManifest -Path $ManifestPath -ModuleVersion $Version
-    git add $ManifestPath
 
-    $PackageLockJsonPath = Join-Path -Path $ProjectRoot -ChildPath "package-lock.json"
-    git add $PackageLockJsonPath
-
-    $ChangelogPath = Join-Path -Path $ProjectRoot -ChildPath "CHANGELOG.md"
-    git add $ChangelogPath
-
+    git add .
 
     $GitMessage = "chore(release): $Version [skip ci]"
 
