@@ -83,7 +83,7 @@ stages:
           - pwsh: |
               Remove-Item -Recurse -Force $env:BUILD_DIR
             env:
-              BUILD_DIR: $(System.DefaultWorkingDirectory)/PSSAToJunit
+              BUILD_DIR: $(System.DefaultWorkingDirectory)/staging
             displayName: clean build cache
             workingDirectory: $(System.DefaultWorkingDirectory)
 
