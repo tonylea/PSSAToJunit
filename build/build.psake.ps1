@@ -63,8 +63,15 @@ Task ConfigGit {
     git config --global user.email "bot@dev.azure.com"
     git config --global user.name "Build Agent"
 
-    git switch main
+    git checkout -b main main
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "An error occurred while running the 'git checkout -b main main' command."
+    }
+
     git pull
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "An error occurred while running the 'git pull' command."
+    }
 }
 
 Task UnitTests -Depends Init {
@@ -160,8 +167,19 @@ Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
     $GitMessage = "chore(release): $Version [skip ci]"
 
     git commit -m $GitMessage
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "An error occurred while running the 'git commit -m $GitMessage' command."
+    }
+
     git tag -a v$Version -m $GitMessage
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "An error occurred while running the 'git tag -a v$Version -m $GitMessage' command."
+    }
+
     git push origin main --tags
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "An error occurred while running the 'git push origin main --tags' command."
+    }
 }
 
 Task CreateNuspecFile -depends Init {
