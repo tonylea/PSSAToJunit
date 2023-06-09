@@ -113,6 +113,7 @@ stages:
                 Repository = 'PSGallery'
                 Verbosity = $true
               }
+              Publish-Module @PublishModuleArgs
             env:
               NUGET_KEY: $(psgalleryApiKey)
               $MODULE_PATH: $(Pipeline.Workspace)/$(Build.BuildId)
