@@ -107,23 +107,14 @@ stages:
 
           # publish to PSGallery
           - pwsh: |
-              $JoinPathArgs = @{
-                Path = $env:PIPELINE_WORKSPACE
-                ChildPath = $env:BUILD_BUILDID
-                AdditionalChildPath = @('staging', 'PSSAToJunit')
+              $PublishModuleArgs = @{
+                Path        = $env:MODULE_PATH
+                NuGetApiKey = $env:NUGET_KEY
+                Repository  = 'PSGallery'
+                Verbose     = $true
               }
-              $MODULE_PATH = Join-Path @JoinPathArgs
-              Write-Host "Publishing module from: $MODULE_PATH" -foregroundcolor cyan
-
-              # $PublishModuleArgs = @{
-              #   Path = $MODULE_PATH
-              #   NuGetApiKey = $env:NUGET_KEY
-              #   Repository = 'PSGallery'
-              #   Verbosity = $true
-              # }
-              # Publish-Module @PublishModuleArgs
+              Publish-Module @PublishModuleArgs
             env:
               NUGET_KEY: $(psgalleryApiKey)
-              PIPELINE_WORKSPACE: $(Pipeline.Workspace)
-              BUILD_BUILDID: $(Build.BuildId)
+              MODULE_PATH: $(Pipeline.Workspace)/$(Build.BuildId)/PSSAToJunit
             displayName: publish to PSGallery
