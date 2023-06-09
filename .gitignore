@@ -132,6 +132,7 @@ temp-files/
 test-results/
 megalinter-reports/
 staging/
+TODO.md
 
 ###############################################
 # MacOS                                       #
