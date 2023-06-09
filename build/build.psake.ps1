@@ -63,7 +63,7 @@ Task ConfigGit {
     git config --global user.email "bot@dev.azure.com"
     git config --global user.name "Build Agent"
 
-    git checkout main
+    git switch main
     git pull
 }
 
@@ -138,8 +138,6 @@ Task UpdateChangeLog -Depends UpdateExternalHelpFile {
 
 Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
     Write-Host "`n$Lines`n"
-
-
 
     npm install
     npm run version-bump
