@@ -62,16 +62,6 @@ Task ConfigGit {
 
     git config --global user.email "bot@dev.azure.com"
     git config --global user.name "Build Agent"
-
-    git checkout -b main main
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "An error occurred while running the 'git checkout -b main main' command."
-    }
-
-    git pull
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "An error occurred while running the 'git pull' command."
-    }
 }
 
 Task UnitTests -Depends Init {

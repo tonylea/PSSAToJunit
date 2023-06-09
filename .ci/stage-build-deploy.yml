@@ -12,6 +12,9 @@ stages:
       - job: build
         displayName: Build module
         steps:
+          - checkout: self
+            persistCredentials: true
+
           - pwsh: |
               $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
               $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
