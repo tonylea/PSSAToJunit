@@ -170,7 +170,7 @@ Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
 Task CreateNuspecFile -depends Init {
     Write-Host "`n$Lines`n"
 
-    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath $ModuleName
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
 
     $OutputPath = Join-Path -Path $StagingFolder -ChildPath "$ModuleName.nuspec"
@@ -198,7 +198,7 @@ Task CreateNuspecFile -depends Init {
 Task CreateExternalHelp -Depends CreateNuspecFile {
     Write-Host "`n$Lines`n"
 
-    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath $ModuleName
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
 
     $ExternalHelpFolder = Join-Path -Path $StagingFolder -ChildPath "en-GB"
@@ -208,11 +208,8 @@ Task CreateExternalHelp -Depends CreateNuspecFile {
 Task BuildPackage -Depends CreateExternalHelp {
     Write-Host "`n$Lines`n"
 
-    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
+    $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath $ModuleName
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
-
-    $StagingModuleFolder = Join-Path -Path $StagingFolder -ChildPath $ModuleName
-    New-Item -Path $StagingModuleFolder -ItemType 'Directory' -Force
 
     $ClassesFolder = Join-Path -Path $ModulePath -ChildPath "classes" -AdditionalChildPath "*.ps1"
     $Classes = @( Get-ChildItem -Path $ClassesFolder -ErrorAction SilentlyContinue )
@@ -223,10 +220,10 @@ Task BuildPackage -Depends CreateExternalHelp {
     $PublicFolder = Join-Path -Path $ModulePath -ChildPath "public" -AdditionalChildPath "*.ps1"
     $Public = @( Get-ChildItem -Path $PublicFolder -ErrorAction SilentlyContinue )
 
-    $CombinedFunctionsPath = Join-Path -Path $StagingModuleFolder -ChildPath "$ModuleName.psm1"
+    $CombinedFunctionsPath = Join-Path -Path $StagingFolder -ChildPath "$ModuleName.psm1"
     foreach ($File in @($Public + $Private + $Classes)) {
         $File | Get-Content | Add-Content -Path $CombinedFunctionsPath
     }
 
-    Copy-Item -Path $ManifestPath -Destination $StagingModuleFolder
+    Copy-Item -Path $ManifestPath -Destination $StagingFolder
 }

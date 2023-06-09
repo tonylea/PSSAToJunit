@@ -70,7 +70,7 @@ stages:
 
           - task: ArchiveFiles@2
             inputs:
-              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/staging'
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/PSSAToJunit'
               archiveType: 'zip'
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
 
@@ -81,9 +81,9 @@ stages:
               publishLocation: 'Container'
 
           - pwsh: |
-              Remove-Item -Recurse -Force $env:STAGING_DIR
+              Remove-Item -Recurse -Force $env:BUILD_DIR
             env:
-              STAGING_DIR: $(System.DefaultWorkingDirectory)/staging
+              BUILD_DIR: $(System.DefaultWorkingDirectory)/PSSAToJunit
             displayName: clean build cache
             workingDirectory: $(System.DefaultWorkingDirectory)
 
@@ -103,7 +103,7 @@ stages:
           - task: ExtractFiles@1
             inputs:
               archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
-              destinationFolder: $(System.DefaultWorkingDirectory)/deploy
+              destinationFolder:  '$(Pipeline.Workspace)/$(Build.BuildId)'
 
           # publish to PSGallery
           - pwsh: |
@@ -117,6 +117,6 @@ stages:
               Publish-Module @PublishModuleArgs
             env:
               NUGET_KEY: $(psgalleryApiKey)
-              DEPLOY_FOLDER: $(System.DefaultWorkingDirectory)/deploy
+              DEPLOY_FOLDER:  '$(Pipeline.Workspace)/$(Build.BuildId)'
 
             displayName: publish to PSGallery
