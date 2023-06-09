@@ -88,7 +88,7 @@ stages:
             workingDirectory: $(System.DefaultWorkingDirectory)
 
       - job: deploy
-        displayName: Deploy to PSGalley
+        displayName: Deploy to PSGallery
         dependsOn: build
         condition: succeeded()
         steps:
@@ -107,6 +107,9 @@ stages:
 
           # publish to PSGallery
           - pwsh: |
+              $MODULE_PATH = Join-Path -Path $env:Pipeline_Workspace -ChildPath $env:Build_BuildId -ChildPath 'staging'
+              Write-Host "Publishing module from: $MODULE_PATH" -foregroundcolor cyan
+
               $PublishModuleArgs = @{
                 Path = $MODULE_PATH
                 NuGetApiKey = $env:NUGET_KEY
@@ -116,5 +119,4 @@ stages:
               Publish-Module @PublishModuleArgs
             env:
               NUGET_KEY: $(psgalleryApiKey)
-              $MODULE_PATH: $(Pipeline.Workspace)/$(Build.BuildId)
             displayName: publish to PSGallery
