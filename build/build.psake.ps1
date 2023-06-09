@@ -62,6 +62,9 @@ Task ConfigGit {
 
     git config --global user.email "bot@dev.azure.com"
     git config --global user.name "Build Agent"
+
+    git checkout main
+    git pull
 }
 
 Task UnitTests -Depends Init {
@@ -121,20 +124,22 @@ Task IntegrationTests -Depends Init {
 }
 
 Task UpdateExternalHelpFile -Depends Init {
-    $lines
+    Write-Host "`n$Lines`n"
 
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
 }
 
 Task UpdateChangeLog -Depends UpdateExternalHelpFile {
-    $lines
+    Write-Host "`n$Lines`n"
 
     npm install
     npm run update-changelog
 }
 
 Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
-    $lines
+    Write-Host "`n$Lines`n"
+
+
 
     npm install
     npm run version-bump
@@ -162,7 +167,7 @@ Task BumpVersion -Depends UpdateChangeLog, ConfigGit {
 }
 
 Task CreateNuspecFile -depends Init {
-    $Lines
+    Write-Host "`n$Lines`n"
 
     $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
@@ -190,7 +195,7 @@ Task CreateNuspecFile -depends Init {
 }
 
 Task CreateExternalHelp -Depends CreateNuspecFile {
-    $lines
+    Write-Host "`n$Lines`n"
 
     $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
@@ -200,7 +205,7 @@ Task CreateExternalHelp -Depends CreateNuspecFile {
 }
 
 Task BuildPackage -Depends CreateExternalHelp {
-    $lines
+    Write-Host "`n$Lines`n"
 
     $StagingFolder = Join-Path -Path $ProjectRoot -ChildPath 'staging'
     New-Item -Path $StagingFolder -ItemType 'Directory' -Force
