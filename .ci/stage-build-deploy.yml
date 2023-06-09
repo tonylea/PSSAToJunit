@@ -8,6 +8,8 @@ stages:
     pool:
       vmImage: ${{ parameters.vmLinuxImage }}
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    varaibles:
+      - group: 'PowerShellGallery'
     jobs:
       - job: build
         displayName: Build module
@@ -103,9 +105,15 @@ stages:
               archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
               destinationFolder: '$(Pipeline.Workspace)/$(Build.BuildId)'
 
-          # see file strcuture
-          - pwsh: |
-              Get-ChildItem -Path $(Pipeline.Workspace)/$(Build.BuildId) -Recurse
-            displayName: see file structure
-
           # publish to PSGallery
+          - pwsh: |
+              $PublishModuleArgs = @{
+                Path = $MODULE_PATH
+                NuGetApiKey = $env:NUGET_KEY
+                Repository = 'PSGallery'
+                Verbosity = $true
+              }
+            env:
+              NUGET_KEY: $(psgalleryApiKey)
+              $MODULE_PATH: $(Pipeline.Workspace)/$(Build.BuildId)
+            displayName: publish to PSGallery
