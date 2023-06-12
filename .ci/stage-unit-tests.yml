@@ -48,7 +48,11 @@ stages:
           - template: ./step.unit-tests.yml
             parameters:
               operatingSystem: macOS
+              dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
+              psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              unitTestsFolder: ${{ parameters.unitTestsFolder}}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
 
       - job: windowsUnitTests
         displayName: "Windows Tests"
@@ -58,4 +62,8 @@ stages:
           - template: ./step.unit-tests.yml
             parameters:
               operatingSystem: Windows
+              dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
+              psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              unitTestsFolder: ${{ parameters.unitTestsFolder}}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
