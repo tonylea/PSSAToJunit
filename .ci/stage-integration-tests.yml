@@ -48,11 +48,11 @@ stages:
           - template: ./step.integration-tests.yml
             parameters:
               operatingSystem: macOS
-              utilScriptPath: ${{ parameters.utilScriptPath }}
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
-              psakeFilePath: ${{ parameters.psakeFilePath }}
               integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
+              psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
 
       - job: windowsUnitTests
         displayName: "Windows"
@@ -62,9 +62,8 @@ stages:
           - template: ./step.integration-tests.yml
             parameters:
               operatingSystem: Windows
-              utilScriptPath: ${{ parameters.utilScriptPath }}
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
+              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
               psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
-              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
-              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
