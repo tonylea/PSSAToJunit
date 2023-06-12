@@ -55,6 +55,8 @@ Task Init {
 Task UnitTests -depends Init {
     Write-Host "`n$Lines`n"
 
+    Import-Module -Name Pester -Force
+
     $Config = [PesterConfiguration]@{
         Run          = @{
             Path     = $UnitTestsFolder
@@ -87,6 +89,8 @@ Task UnitTests -depends Init {
 
 Task IntegrationTests -depends Init {
     Write-Host "`n$Lines`n"
+
+    Import-Module -Name Pester -Force
 
     $Config = [PesterConfiguration]@{
         Run        = @{
