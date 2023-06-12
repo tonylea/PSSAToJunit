@@ -1,29 +1,39 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory)]
-    [System.IO.FileInfo]
-    $DependencyConfigPath,
-
-    [Parameter()]
-    [Switch]
-    $ResolveDependency,
-
-    [Parameter()]
-    [Switch]
-    $ImportProjectModule,
-
-    [Parameter(Mandatory)]
-    [ValidateSet("UnitTests", "IntegrationTests", "BumpVersion", "BuildPackage")]
+    [ValidateSet(
+        "InstallDependencies",
+        "UnitTests",
+        "IntegrationTests",
+        "UpdateMarkdownHelpFiles",
+        "UpdateManifest",
+        "BumpVersion",
+        "GitCommit",
+        "CreateNuspecFile",
+        "CreateExternalHelp",
+        "MinimiseScriptFiles"
+    )]
     [System.String]
     $Task,
 
-    [Parameter()]
-    [System.String]
-    $OperatingSystem
+    [System.IO.FileInfo]
+    $DependencyConfigPath,
+
+    [System.IO.FileInfo]
+    $PSakeFilepath
 )
 
-if ($ResolveDependency.IsPresent) {
-    Write-Host "`nSTARTED TASK: Install dependencies" -ForegroundColor Blue
+Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Blue
+
+if ($Task -eq "InstallDependencies") {
+    if (-not $DependencyConfigPath) {
+        Write-Error "DependencyConfigPath is required when Task is InstallDependencies"
+        exit 1
+    }
+    elseif (-not $DependencyConfigPath.Exists) {
+        Write-Error "DependencyConfigPath does not exist: $DependencyConfigPath"
+        exit 1
+    }
 
     if (-not ((Get-PSRepository PSGallery).InstallationPolicy -like "Trusted")) {
         Write-Host "`n  Set PSGallery as trusted source"
@@ -32,7 +42,6 @@ if ($ResolveDependency.IsPresent) {
 
     Get-PackageProvider -Name "NuGet" -ForceBootstrap | Out-Null
 
-    # Install PSDepend module if it is not already installed
     if (-not (Get-Module -Name "PSDepend" -ListAvailable)) {
         Write-Host "`n  Installing PSDepend"
         Install-Module -Name "PSDepend" -Scope "CurrentUser" -Force
@@ -41,8 +50,7 @@ if ($ResolveDependency.IsPresent) {
         Write-Host "`n  PSDepend already installed"
     }
 
-    # Install build dependencies
-    Write-Host "`n  Resolving module dependencies from $DependencyConfigPath"
+    Write-Host "`n  Resolving module dependencies from: $DependencyConfigPath"
     Import-Module -Name "PSDepend"
     $InvokePSDependArgs = @{
         Path    = $DependencyConfigPath
@@ -53,31 +61,26 @@ if ($ResolveDependency.IsPresent) {
     Invoke-PSDepend @InvokePSDependArgs
 }
 else {
-    Write-Host "`nSKIPPED TASK: Install dependencies" -ForegroundColor Blue
+    if (-not $PSakeFilepath) {
+        Write-Error "PSakeFilepath is required when Task is not InstallDependencies"
+        exit 1
+    }
+    elseif (-not $PSakeFilepath.Exists) {
+        Write-Error "PSakeFile does not exist: $PSakeFilepath"
+        exit 1
+    }
+
+    Write-Host "`nSTARTED TASK: Set environmental variables" -ForegroundColor Blue
+    Set-BuildEnvironment -Force
+
+    Write-Host "`nSTARTED TASK: Invoke psake" -ForegroundColor Blue
+
+    $InvokePsakeArgs = @{
+        buildFile = $PSakeFilepath
+        nologo    = $true
+        taskList  = $Task
+    }
+    Invoke-Psake @InvokePsakeArgs
+
+    exit ( [int](-not $psake.build_success) )
 }
-
-# Init BuildHelpers
-Write-Host "`nSTARTED TASK: Set environmental variables" -ForegroundColor Blue
-Set-BuildEnvironment -Force
-
-# Load Ansi Colours Write-Host
-Write-Host "`nSTARTED TASK: Overload Write-Host with Ansi colours" -ForegroundColor Blue
-$AnsiWriteHostOverloadPath = Join-Path -Path $ENV:BHProjectPath -ChildPath "utils" -AdditionalChildPath "AnsiWriteHostOverload.ps1"
-. $AnsiWriteHostOverloadPath
-
-if ($ImportProjectModule.IsPresent) {
-    Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
-    Import-Module -Name $ENV:BHPSModuleManifest -Force
-}
-
-# Execute psake tasks
-Write-Host -AnsiColors "`nSTARTED TASK: $Task" -ForegroundColor Green
-
-$InvokePsakeArgs = @{
-    buildFile = Join-Path -Path $ENV:BHProjectPath -ChildPath "build" -AdditionalChildPath "build.psake.ps1"
-    nologo    = $true
-    taskList  = $Task
-}
-Invoke-Psake @InvokePsakeArgs
-
-exit ( [int](-not $psake.build_success) )

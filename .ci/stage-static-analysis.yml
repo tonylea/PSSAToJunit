@@ -19,7 +19,6 @@ stages:
     pool:
       vmImage: ${{ parameters.vmImage }}
     jobs:
-      # Markdown Linting
       - job: markdownlint
         displayName: "Markdown Linting"
         steps:
@@ -59,7 +58,6 @@ stages:
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
 
-      # PSScriptAnalyzer
       - job: psscriptanalyzer
         displayName: "PSScriptAnalyzer scan"
         steps:
@@ -75,7 +73,6 @@ stages:
               POWERSHELL_MODULE_PATH: ${{ parameters.srcFolder }}
             displayName: "run PSScriptAnalyzer"
 
-      # Mega-Linter
       - job: megalinter
         displayName: "Mega-Linter scan"
         steps:
@@ -163,7 +160,6 @@ stages:
             displayName: "remove mega-linter container"
             condition: succeededOrFailed()
 
-      # Secretlint https://github.com/secretlint/secretlint#readmeMEGALINTER_FLAVOUR
       - job: secretlint
         displayName: "Secretlint scan"
         steps:

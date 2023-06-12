@@ -1,10 +1,31 @@
 {
   "name": "pssatojunit",
-  "private": "true",
   "version": "0.0.14",
+  "description": "Convert PSScriptAnalyzer results to Junit XML",
+  "private": "true",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tonylea/PSSAToJunit.git"
+  },
+  "manifestProperties": {
+    "guid": "fa5b675c-f181-4571-bda8-2b24da71d04b",
+    "compatiblePSEditions": [
+      "Core"
+    ],
+    "author": "Tony Lea",
+    "companyName": "",
+    "copyright": "(c) Tony Lea. All rights reserved.",
+    "powerShellVersion": "7.0.0",
+    "requiredModules": [
+      "PSScriptAnalyzer"
+    ],
+    "tags": [
+      "PSSA",
+      "PSScriptAnalyzer",
+      "Junit"
+    ],
+    "licenseUri": "https://mit-license.org",
+    "projectUri": "https://github.com/tonylea/PSSAToJunit"
   },
   "devDependencies": {
     "@commitlint/cli": "17.6.5",

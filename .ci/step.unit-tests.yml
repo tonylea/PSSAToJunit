@@ -1,38 +1,50 @@
 parameters:
   - name: operatingSystem
     type: string
+  - name: dependencyConfigPath
+    type: string
+  - name: psakeFilePath
+    type: string
   - name: testResultsPath
+    type: string
+  - name: unitTestsFolder
+    type: string
+  - name: utilScriptPath
     type: string
 
 steps:
   - pwsh: |
-      $BuildFolder = Join-Path -Path $ENV:ROOT_FOLDER -ChildPath $ENV:BUILD_FOLDER_NAME
-      $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $ENV:BUILD_FILENAME
-      $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $ENV:DEPENDANCY_FILENAME
-
-      Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
-
-      $BuildScriptPathArgs = @{
-        ResolveDependency = $true
-        DependencyConfigPath = $DependancyConfigPath
-        Task = "UnitTests"
+      $UtilScriptPathArgs = @{
+        DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
+        Task                 = "InstallDependencies"
       }
-
-      . $BuildScriptPath @BuildScriptPathArgs
+      . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
     env:
-      ROOT_FOLDER: $(System.DefaultWorkingDirectory)
-      BUILD_FOLDER_NAME: build
-      BUILD_FILENAME: build.ps1
-      DEPENDANCY_FILENAME: dependencies.psd1
-    displayName: Pester tests
+      UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+      DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
+    displayName: install dependencies
+    workingDirectory: $(System.DefaultWorkingDirectory)
+
+  - pwsh: |
+      $UtilScriptPathArgs = @{
+        PSakeFilepath = $env:PSAKE_FILEPATH
+        Task          = "UnitTests"
+      }
+      . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+    env:
+      UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+      PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+      TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
+      UNIT_TESTS_FOLDER: ${{ parameters.unitTestsFolder }}
+    displayName: run pester tests
     workingDirectory: $(System.DefaultWorkingDirectory)
 
   - task: PublishTestResults@2
-    displayName: publish unit tests
+    displayName: publish test results
     condition: succeededOrFailed()
     inputs:
       testResultsFormat: "JUnit"
-      testResultsFiles: "**/${{ parameters.operatingSystem }}-unit-tests.xml"
+      testResultsFiles: "**/**.xml"
       searchFolder: "${{ parameters.testResultsPath }}"
       mergeTestResults: false
       testRunTitle: ${{ parameters.operatingSystem }}-unit-tests

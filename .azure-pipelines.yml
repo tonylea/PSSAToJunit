@@ -26,8 +26,11 @@ stages:
   # Unit Tests
   - template: ./.ci/stage-unit-tests.yml
     parameters:
-      buildFolder: $(buildFolder)
+      dependencyConfigPath: $(dependencyConfigPath)
+      psakeFilePath: $(psakeFilePath)
       testResultsPath: $(testResultsPath)
+      unitTestsFolder: $(unitTestsFolder)
+      utilScriptPath: $(utilScriptPath)
       vmLinuxImage: $(vmLinuxImage)
       vmMacosImage: $(vmMacosImage)
       vmWindowsImage: $(vmWindowsImage)
@@ -35,8 +38,11 @@ stages:
   # Integration Tests
   - template: ./.ci/stage-integration-tests.yml
     parameters:
-      buildFolder: $(buildFolder)
+      dependencyConfigPath: $(dependencyConfigPath)
+      integrationTestsFolder: $(integrationTestsFolder)
+      psakeFilePath: $(psakeFilePath)
       testResultsPath: $(testResultsPath)
+      utilScriptPath: $(utilScriptPath)
       vmLinuxImage: $(vmLinuxImage)
       vmMacosImage: $(vmMacosImage)
       vmWindowsImage: $(vmWindowsImage)
@@ -45,3 +51,7 @@ stages:
   - template: ./.ci/stage-build-deploy.yml
     parameters:
       vmLinuxImage: $(vmLinuxImage)
+      utilScriptPath: $(utilScriptPath)
+      dependencyConfigPath: $(dependencyConfigPath)
+      psakeFilePath: $(psakeFilePath)
+      docsFolder: $(docsFolder)

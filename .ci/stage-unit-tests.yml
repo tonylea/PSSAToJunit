@@ -1,7 +1,13 @@
 parameters:
-  - name: buildFolder
+  - name: dependencyConfigPath
+    type: string
+  - name: psakeFilePath
     type: string
   - name: testResultsPath
+    type: string
+  - name: unitTestsFolder
+    type: string
+  - name: utilScriptPath
     type: string
   - name: vmLinuxImage
     type: string
@@ -28,7 +34,11 @@ stages:
           - template: ./step.unit-tests.yml
             parameters:
               operatingSystem: Linux
+              dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
+              psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              unitTestsFolder: ${{ parameters.unitTestsFolder}}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
 
       - job: macosUnitTests
         displayName: "MacOS Tests"

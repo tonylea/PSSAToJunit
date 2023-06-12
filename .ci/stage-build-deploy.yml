@@ -1,6 +1,14 @@
 parameters:
   - name: vmLinuxImage
     type: string
+  - name: utilScriptPath
+    type: string
+  - name: dependencyConfigPath
+    type: string
+  - name: psakeFilePath
+    type: string
+  - name: docsFolder
+    type: string
 
 stages:
   - stage: buildDeploy
@@ -18,74 +26,116 @@ stages:
             persistCredentials: true
 
           - pwsh: |
-              $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
-              $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
-              $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
-
-              Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
-
-              $BuildScriptPathArgs = @{
-                ResolveDependency    = $true
-                DependencyConfigPath = $DependancyConfigPath
-                Task                 = "BumpVersion"
-                ImportProjectModule  = $true
+              $UtilScriptPathArgs = @{
+                DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
+                Task                 = "InstallDependencies"
               }
-              . $BuildScriptPath @BuildScriptPathArgs
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
             env:
-              ROOT_FOLDER: $(System.DefaultWorkingDirectory)
-              BUILD_FOLDER_NAME: build
-              BUILD_FILENAME: build.ps1
-              DEPENDANCY_FILENAME: dependencies.psd1
-            displayName: run platyPS
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
+            displayName: install dependencies
             workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
-              git config --global user.email "bot@dev.azure.com"
-              git config --global user.name "Build Agent"
-
-              git push --follow-tags origin HEAD:$(Build.SourceBranchName)
-            displayName: push changes
+              $UtilScriptPathArgs = @{
+                PSakeFilepath = $env:PSAKE_FILEPATH
+                Task          = "UpdateMarkdownHelpFiles"
+              }
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+            env:
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+              DOCS_FOLDER: ${{ parameters.docsFolder }}
+            displayName: update markdown help docs
+            workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
-              $BuildFolder = Join-Path -Path $env:ROOT_FOLDER -ChildPath $env:BUILD_FOLDER_NAME
-              $BuildScriptPath = Join-Path -Path $BuildFolder -ChildPath $env:BUILD_FILENAME
-              $DependancyConfigPath = Join-Path -Path $BuildFolder -ChildPath $env:DEPENDANCY_FILENAME
-
-              Write-Host "Running build script: $BuildScriptPath" -foregroundcolor cyan
-
-              $BuildScriptPathArgs = @{
-                ResolveDependency    = $true
-                DependencyConfigPath = $DependancyConfigPath
-                Task                 = "BuildPackage"
-                ImportProjectModule  = $true
+              $UtilScriptPathArgs = @{
+                PSakeFilepath = $env:PSAKE_FILEPATH
+                Task          = "UpdateManifest"
               }
-              . $BuildScriptPath @BuildScriptPathArgs
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
             env:
-              ROOT_FOLDER: $(System.DefaultWorkingDirectory)
-              BUILD_FOLDER_NAME: build
-              BUILD_FILENAME: build.ps1
-              DEPENDANCY_FILENAME: dependencies.psd1
-            displayName: build package
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+            displayName: update module manifest
             workingDirectory: $(System.DefaultWorkingDirectory)
+
+          - pwsh: |
+              $UtilScriptPathArgs = @{
+                PSakeFilepath = $env:PSAKE_FILEPATH
+                Task          = "BumpVersion"
+              }
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+            env:
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+            displayName: bump version
+            workingDirectory: $(System.DefaultWorkingDirectory)
+
+          - pwsh: |
+              $UtilScriptPathArgs = @{
+                PSakeFilepath = $env:PSAKE_FILEPATH
+                Task          = "GitCommit"
+              }
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+            env:
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+              SOURCE_BRANCH_NAME: $(Build.SourceBranchName)
+            displayName: commit and push changes
+
+          - pwsh: |
+              $UtilScriptPathArgs = @{
+                PSakeFilepath = $env:PSAKE_FILEPATH
+                Task          = "CreateNuspecFile"
+              }
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+            env:
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+              STAGING_FOLDER: $(Build.ArtifactStagingDirectory)/PSSAToJunit
+            displayName: create nuspec file
+
+          - pwsh: |
+              $UtilScriptPathArgs = @{
+                PSakeFilepath = $env:PSAKE_FILEPATH
+                Task          = "CreateExternalHelp"
+              }
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+            env:
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+              STAGING_FOLDER: $(Build.ArtifactStagingDirectory)/PSSAToJunit
+            displayName: create external help file
+
+
+          - pwsh: |
+              $UtilScriptPathArgs = @{
+                PSakeFilepath = $env:PSAKE_FILEPATH
+                Task          = "MinimiseScriptFiles"
+              }
+              . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+            env:
+              UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+              STAGING_FOLDER: $(Build.ArtifactStagingDirectory)/PSSAToJunit
+            displayName: create minimised module
 
           - task: ArchiveFiles@2
+            displayName: create module archive
             inputs:
-              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/PSSAToJunit'
+              rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/PSSAToJunit'
               archiveType: 'zip'
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
 
           - task: PublishBuildArtifacts@1
+            displayName: publish archive as artifact
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
               ArtifactName: 'ModuleArchive'
               publishLocation: 'Container'
-
-          - pwsh: |
-              Remove-Item -Recurse -Force $env:BUILD_DIR
-            env:
-              BUILD_DIR: $(System.DefaultWorkingDirectory)/PSSAToJunit
-            displayName: clean build cache
-            workingDirectory: $(System.DefaultWorkingDirectory)
 
       - job: deploy
         displayName: Deploy to PSGallery
@@ -93,19 +143,19 @@ stages:
         condition: succeeded()
         steps:
           - task: DownloadPipelineArtifact@2
+            displayName: download pipeline artifact
             inputs:
               buildType: 'current'
               artifactName: 'ModuleArchive'
               itemPattern: '**'
               targetPath: '$(Pipeline.Workspace)'
 
-          # extract the archive
           - task: ExtractFiles@1
+            displayName: extract module from archive
             inputs:
               archiveFilePatterns: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
               destinationFolder:  '$(Pipeline.Workspace)/$(Build.BuildId)/'
 
-          # publish to PSGallery
           - pwsh: |
               $ModulePath = Join-Path -Path $env:DEPLOY_FOLDER -ChildPath PSSAToJunit
               $PublishModuleArgs = @{
@@ -118,5 +168,11 @@ stages:
             env:
               NUGET_KEY: $(psgalleryApiKey)
               DEPLOY_FOLDER:  '$(Pipeline.Workspace)/$(Build.BuildId)'
-
             displayName: publish to PSGallery
+
+          - pwsh: |
+              Remove-Item -Recurse -Force $env:BUILD_DIR
+            env:
+              BUILD_DIR: '$(Pipeline.Workspace)/$(Build.BuildId)'
+            displayName: clean build cache
+            workingDirectory: $(System.DefaultWorkingDirectory)
