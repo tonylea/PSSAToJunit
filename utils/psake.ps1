@@ -123,8 +123,10 @@ Task IntegrationTests -depends Init, ImportDependantModules {
     Write-Host "`n"
 }
 
-Task UpdateMarkdownHelpFiles -depends Init {
+Task UpdateMarkdownHelpFiles -depends Init, ImportDependantModules {
     Write-Host "`n$Lines`n"
+
+    Import-Module -Name $ManifestPath -Force
 
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage -AlphabeticParamsOrder -Force -UpdateInputOutput
 }
