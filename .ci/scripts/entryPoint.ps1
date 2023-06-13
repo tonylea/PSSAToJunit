@@ -76,10 +76,12 @@ else {
 
     Write-Host "`nSTARTED TASK: Set environmental variables" -ForegroundColor Blue
     Set-BuildEnvironment -Force
+    Write-Host "              Completed" -ForegroundColor Blue
 
     if ($ImportProjectModule.IsPresent) {
         Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
         Import-Module -Name $ENV:BHPSModuleManifest -Force
+        Write-Host "              Completed" -ForegroundColor Blue
     }
 
     Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Green
