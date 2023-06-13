@@ -31,7 +31,7 @@ stages:
         pool:
           vmImage: $(vmLinuxImage)
         steps:
-          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.unit-tests.yml
+          - template: ../steps/step.unit-tests.yml
             parameters:
               operatingSystem: Linux
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
@@ -45,7 +45,7 @@ stages:
         pool:
           vmImage: $(vmMacosImage)
         steps:
-          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.unit-tests.yml
+          - template: ../steps/step.unit-tests.yml
             parameters:
               operatingSystem: macOS
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
@@ -59,7 +59,7 @@ stages:
         pool:
           vmImage: $(vmWindowsImage)
         steps:
-          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.unit-tests.yml
+          - template: ../steps/step.unit-tests.yml
             parameters:
               operatingSystem: Windows
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}

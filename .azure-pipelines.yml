@@ -10,11 +10,11 @@ pr:
     include: ["*"]
 
 variables:
-  - template: $(System.DefaultWorkingDirectory)/.ci/variables/pipeline-variables.yml
+  - template: .ci/variables/pipeline-variables.yml
 
 stages:
   # Linting
-  - template: $(System.DefaultWorkingDirectory)/.ci/stages/stage-static-analysis.yml
+  - template: .ci/stages/stage-static-analysis.yml
     parameters:
       srcFolder: $(srcFolder)
       testResultsPath: $(testResultsPath)
@@ -24,7 +24,7 @@ stages:
       secretlintVersion: $(secretlintVersion)
 
   # Unit Tests
-  - template: $(System.DefaultWorkingDirectory)/.ci/stages/stage-unit-tests.yml
+  - template: .ci/stages/stage-unit-tests.yml
     parameters:
       dependencyConfigPath: $(dependencyConfigPath)
       psakeFilePath: $(psakeFilePath)
@@ -36,7 +36,7 @@ stages:
       vmWindowsImage: $(vmWindowsImage)
 
   # Integration Tests
-  - template: $(System.DefaultWorkingDirectory)/.ci/stages/stage-integration-tests.yml
+  - template: .ci/stages/stage-integration-tests.yml
     parameters:
       dependencyConfigPath: $(dependencyConfigPath)
       integrationTestsFolder: $(integrationTestsFolder)
@@ -48,7 +48,7 @@ stages:
       vmWindowsImage: $(vmWindowsImage)
 
   # Build & Deploy
-  - template: $(System.DefaultWorkingDirectory)/.ci/stages/stage-build-deploy.yml
+  - template: .ci/stages/stage-build-deploy.yml
     parameters:
       vmLinuxImage: $(vmLinuxImage)
       utilScriptPath: $(utilScriptPath)

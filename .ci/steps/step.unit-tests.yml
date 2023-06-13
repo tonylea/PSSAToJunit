@@ -63,6 +63,6 @@ steps:
       summaryFileLocation: "**/${{ parameters.operatingSystem }}-code-coverage.xml"
       failIfCoverageEmpty: true
 
-  - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.clean-up-tests.yml
+  - template: ./step.clean-up-tests.yml
     parameters:
       testResultsPath: ${{ parameters.testResultsPath }}
