@@ -74,7 +74,7 @@ if ($ImportProjectModule.IsPresent) {
 Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Green
 
 $InvokePsakeArgs = @{
-    buildFile = Join-Path -Path $ENV:BHProjectPath -ChildPath "build" -AdditionalChildPath "build.psake.ps1"
+    buildFile = Join-Path -Path $ENV:BHProjectPath -ChildPath ".ci" -AdditionalChildPath "scripts", "build.psake.ps1"
     nologo    = $true
     taskList  = $Task
 }
