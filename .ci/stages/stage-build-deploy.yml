@@ -26,7 +26,7 @@ stages:
             persistCredentials: true
 
           - pwsh: |
-              $UtilScriptPathArgs = @{
+              $EntryScriptPathArgs = @{
                 DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
                 ProjectRoot          = $env:PROJECT_ROOT
                 Task                 = "InstallDependencies"
@@ -40,7 +40,7 @@ stages:
             workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
-              $UtilScriptPathArgs = @{
+              $EntryScriptPathArgs = @{
                 ResolveDependency    = $true
                 ImportProjectModule  = $true
                 DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
@@ -55,7 +55,7 @@ stages:
             workingDirectory: $(System.DefaultWorkingDirectory)
 
       #     - pwsh: |
-      #         $UtilScriptPathArgs = @{
+      #         $EntryScriptPathArgs = @{
       #           ProjectRoot          = $env:PROJECT_ROOT
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "UpdateManifest"
@@ -69,7 +69,7 @@ stages:
       #       workingDirectory: $(System.DefaultWorkingDirectory)
 
       #     - pwsh: |
-      #         $UtilScriptPathArgs = @{
+      #         $EntryScriptPathArgs = @{
       #           ProjectRoot          = $env:PROJECT_ROOT
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "BumpVersion"
@@ -83,7 +83,7 @@ stages:
       #       workingDirectory: $(System.DefaultWorkingDirectory)
 
       #     - pwsh: |
-      #         $UtilScriptPathArgs = @{
+      #         $EntryScriptPathArgs = @{
       #           ProjectRoot          = $env:PROJECT_ROOT
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "GitCommit"
@@ -97,7 +97,7 @@ stages:
       #       displayName: commit and push changes
 
       #     - pwsh: |
-      #         $UtilScriptPathArgs = @{
+      #         $EntryScriptPathArgs = @{
       #           ProjectRoot          = $env:PROJECT_ROOT
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "CreateNuspecFile"
@@ -111,7 +111,7 @@ stages:
       #       displayName: create nuspec file
 
       #     - pwsh: |
-      #         $UtilScriptPathArgs = @{
+      #         $EntryScriptPathArgs = @{
       #           ProjectRoot          = $env:PROJECT_ROOT
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "CreateExternalHelp"
@@ -126,7 +126,7 @@ stages:
 
 
       #     - pwsh: |
-      #         $UtilScriptPathArgs = @{
+      #         $EntryScriptPathArgs = @{
       #           ProjectRoot          = $env:PROJECT_ROOT
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "MinimiseScriptFiles"

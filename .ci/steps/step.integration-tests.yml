@@ -14,7 +14,7 @@ parameters:
 
 steps:
   - pwsh: |
-      $UtilScriptPathArgs = @{
+      $EntryScriptPathArgs = @{
         DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
         ProjectRoot          = $env:PROJECT_ROOT
         Task                 = "InstallDependencies"
@@ -28,7 +28,7 @@ steps:
     workingDirectory: $(System.DefaultWorkingDirectory)
 
   - pwsh: |
-      $UtilScriptPathArgs = @{
+      $EntryScriptPathArgs = @{
         PSakeFilepath = $env:PSAKE_FILEPATH
         ProjectRoot   = $env:PROJECT_ROOT
         Task          = "IntegrationTests"
