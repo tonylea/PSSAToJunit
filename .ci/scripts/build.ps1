@@ -59,10 +59,10 @@ else {
 Write-Host "`nSTARTED TASK: Set environmental variables" -ForegroundColor Blue
 Set-BuildEnvironment -Force
 
-# Load Ansi Colours Write-Host
-Write-Host "`nSTARTED TASK: Overload Write-Host with Ansi colours" -ForegroundColor Blue
-$AnsiWriteHostOverloadPath = Join-Path -Path $ENV:BHProjectPath -ChildPath "utils" -AdditionalChildPath "AnsiWriteHostOverload.ps1"
-. $AnsiWriteHostOverloadPath
+# # Load Ansi Colours Write-Host
+# Write-Host "`nSTARTED TASK: Overload Write-Host with Ansi colours" -ForegroundColor Blue
+# $AnsiWriteHostOverloadPath = Join-Path -Path $ENV:BHProjectPath -ChildPath "utils" -AdditionalChildPath "AnsiWriteHostOverload.ps1"
+# . $AnsiWriteHostOverloadPath
 
 if ($ImportProjectModule.IsPresent) {
     Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
@@ -70,7 +70,8 @@ if ($ImportProjectModule.IsPresent) {
 }
 
 # Execute psake tasks
-Write-Host -AnsiColors "`nSTARTED TASK: $Task" -ForegroundColor Green
+# Write-Host -AnsiColors "`nSTARTED TASK: $Task" -ForegroundColor Green
+Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Green
 
 $InvokePsakeArgs = @{
     buildFile = Join-Path -Path $ENV:BHProjectPath -ChildPath "build" -AdditionalChildPath "build.psake.ps1"
