@@ -1,11 +1,11 @@
 parameters:
   - name: dependencyConfigPath
     type: string
-  - name: integrationTestsFolder
-    type: string
   - name: psakeFilePath
     type: string
   - name: testResultsPath
+    type: string
+  - name: unitTestsFolder
     type: string
   - name: utilScriptPath
     type: string
@@ -17,9 +17,9 @@ parameters:
     type: string
 
 stages:
-  - stage: integrationTests
-    displayName: Integration Tests
-    dependsOn: [unitTests]
+  - stage: unitTests
+    displayName: Unit Tests
+    dependsOn: [staticAnalysis]
     condition: |
       and(
         succeeded(),
@@ -27,43 +27,43 @@ stages:
       )
     jobs:
       - job: linuxUnitTests
-        displayName: "Linux"
+        displayName: "Linux Tests"
         pool:
           vmImage: $(vmLinuxImage)
         steps:
-          - template: ./step.integration-tests.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.unit-tests.yml
             parameters:
               operatingSystem: Linux
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
-              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
               psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              unitTestsFolder: ${{ parameters.unitTestsFolder}}
               utilScriptPath: ${{ parameters.utilScriptPath }}
 
       - job: macosUnitTests
-        displayName: "MacOS"
+        displayName: "MacOS Tests"
         pool:
           vmImage: $(vmMacosImage)
         steps:
-          - template: ./step.integration-tests.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.unit-tests.yml
             parameters:
               operatingSystem: macOS
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
-              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
               psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              unitTestsFolder: ${{ parameters.unitTestsFolder}}
               utilScriptPath: ${{ parameters.utilScriptPath }}
 
       - job: windowsUnitTests
-        displayName: "Windows"
+        displayName: "Windows Tests"
         pool:
           vmImage: $(vmWindowsImage)
         steps:
-          - template: ./step.integration-tests.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.unit-tests.yml
             parameters:
               operatingSystem: Windows
               dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
-              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
               psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              unitTestsFolder: ${{ parameters.unitTestsFolder}}
               utilScriptPath: ${{ parameters.utilScriptPath }}

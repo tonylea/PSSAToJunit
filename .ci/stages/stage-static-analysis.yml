@@ -54,7 +54,7 @@ stages:
               failTaskOnFailedTests: true
               publishRunAttachments: true
 
-          - template: ./step.clean-up-tests.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.clean-up-tests.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
 
@@ -131,27 +131,27 @@ stages:
             displayName: "convert reports to junit"
             condition: succeededOrFailed()
 
-          - template: ./step.mega-linter-publish-scan.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.mega-linter-publish-scan.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
               testName: "MARKDOWN_MARKDOWN_LINK_CHECK"
 
-          - template: ./step.mega-linter-publish-scan.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.mega-linter-publish-scan.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
               testName: "MARKDOWN_MARKDOWN_TABLE_FORMATTER"
 
-          - template: ./step.mega-linter-publish-scan.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.mega-linter-publish-scan.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
               testName: "EDITORCONFIG_EDITORCONFIG_CHECKER"
 
-          - template: ./step.mega-linter-publish-scan.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.mega-linter-publish-scan.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
               testName: "SPELL_CSPELL"
 
-          - template: ./step.clean-up-tests.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.clean-up-tests.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}
 
@@ -195,6 +195,6 @@ stages:
               failTaskOnFailedTests: true
               publishRunAttachments: true
 
-          - template: ./step.clean-up-tests.yml
+          - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.clean-up-tests.yml
             parameters:
               testResultsPath: ${{ parameters.testResultsPath }}

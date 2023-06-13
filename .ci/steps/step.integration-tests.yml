@@ -55,6 +55,6 @@ steps:
       failTaskOnFailedTests: true
       publishRunAttachments: true
 
-  - template: ./step.clean-up-tests.yml
+  - template: $(System.DefaultWorkingDirectory)/.ci/steps/step.clean-up-tests.yml
     parameters:
       testResultsPath: ${{ parameters.testResultsPath }}
