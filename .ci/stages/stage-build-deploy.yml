@@ -31,7 +31,7 @@ stages:
                 ProjectRoot          = $env:PROJECT_ROOT
                 Task                 = "InstallDependencies"
               }
-              . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+              . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
             env:
               ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
               DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
@@ -46,7 +46,7 @@ stages:
                 DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
                 Task                = "UpdateExternalHelpFile"
               }
-              . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+              . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
             env:
               ENTRY_SCRIPTPATH:  $(System.DefaultWorkingDirectory)/.ci/scripts/build.ps1
               DOCS_FOLDER: ${{ parameters.docsFolder }}
@@ -60,7 +60,7 @@ stages:
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "UpdateManifest"
       #         }
-      #         . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      #         . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
       #       env:
       #         ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       #         PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
@@ -74,7 +74,7 @@ stages:
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "BumpVersion"
       #         }
-      #         . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      #         . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
       #       env:
       #         ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       #         PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
@@ -88,7 +88,7 @@ stages:
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "GitCommit"
       #         }
-      #         . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      #         . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
       #       env:
       #         ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       #         PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
@@ -102,7 +102,7 @@ stages:
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "CreateNuspecFile"
       #         }
-      #         . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      #         . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
       #       env:
       #         ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       #         PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
@@ -116,7 +116,7 @@ stages:
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "CreateExternalHelp"
       #         }
-      #         . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      #         . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
       #       env:
       #         ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       #         PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
@@ -131,7 +131,7 @@ stages:
       #           PSakeFilepath = $env:PSAKE_FILEPATH
       #           Task          = "MinimiseScriptFiles"
       #         }
-      #         . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      #         . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
       #       env:
       #         ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       #         PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}

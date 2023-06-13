@@ -19,7 +19,7 @@ steps:
         ProjectRoot          = $env:PROJECT_ROOT
         Task                 = "InstallDependencies"
       }
-      . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
     env:
       ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
@@ -33,7 +33,7 @@ steps:
         ProjectRoot   = $env:PROJECT_ROOT
         Task          = "IntegrationTests"
       }
-      . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
+      . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
     env:
       ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
