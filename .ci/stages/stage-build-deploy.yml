@@ -43,7 +43,6 @@ stages:
               $UtilScriptPathArgs = @{
                 ProjectRoot         = $env:PROJECT_ROOT
                 PSakeFilepath       = $env:PSAKE_FILEPATH
-                ImportProjectModule = $true
                 Task                = "UpdateMarkdownHelpFiles"
               }
               . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
