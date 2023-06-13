@@ -31,7 +31,6 @@ if ($ImportProjectModule.IsPresent) {
 }
 
 # Execute psake tasks
-# Write-Host -AnsiColors "`nSTARTED TASK: $Task" -ForegroundColor Green
 Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Green
 
 $InvokePsakeArgs = @{

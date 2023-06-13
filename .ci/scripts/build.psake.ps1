@@ -5,6 +5,7 @@ Properties {
     $ManifestPath = $env:BHPSModuleManifest
     if (-not $ManifestPath) { $ManifestPath = Join-Path -Path $ProjectRoot -ChildPath src -AdditionalChildPath "PSSAToJunti.psd1" }
 
+    $DocsHelpFolder = $env:DOCS_FOLDER
     if (-not $DocsHelpFolder) {
         $DocsHelpFolder = Join-Path -Path $ProjectRoot -ChildPath "docs"
     }
