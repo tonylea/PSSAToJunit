@@ -20,8 +20,17 @@ param (
     $DependencyConfigPath,
 
     [System.IO.FileInfo]
-    $PSakeFilepath
+    $PSakeFilepath,
+
+    [Parameter(Mandatory)]
+    [System.IO.FileInfo]
+    $ProjectRoot,
+
+    [Switch]
+    $ImportProjectModule
 )
+
+Set-Location -Path $ProjectRoot
 
 Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Blue
 
@@ -72,6 +81,11 @@ else {
 
     Write-Host "`nSTARTED TASK: Set environmental variables" -ForegroundColor Blue
     Set-BuildEnvironment -Force
+
+    if ($Task -like "UpdateMarkdownHelpFiles") {
+        Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
+        Import-Module -Name $ENV:BHPSModuleManifest -Force
+    }
 
     Write-Host "`nSTARTED TASK: Invoke psake" -ForegroundColor Blue
 

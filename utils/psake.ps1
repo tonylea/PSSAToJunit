@@ -128,7 +128,7 @@ Task UpdateMarkdownHelpFiles -depends Init, ImportDependantModules {
 
     Import-Module -Name $ManifestPath -Force
 
-    Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage -AlphabeticParamsOrder -Force -UpdateInputOutput
+    Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage # -AlphabeticParamsOrder -Force -UpdateInputOutput
 }
 
 Task UpdateManifest -depends Init {

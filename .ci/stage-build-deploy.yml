@@ -28,30 +28,36 @@ stages:
           - pwsh: |
               $UtilScriptPathArgs = @{
                 DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
+                ProjectRoot          = $env:PROJECT_ROOT
                 Task                 = "InstallDependencies"
               }
               . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
             env:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: install dependencies
             workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
               $UtilScriptPathArgs = @{
-                PSakeFilepath = $env:PSAKE_FILEPATH
-                Task          = "UpdateMarkdownHelpFiles"
+                ProjectRoot         = $env:PROJECT_ROOT
+                PSakeFilepath       = $env:PSAKE_FILEPATH
+                ImportProjectModule = $true
+                Task                = "UpdateMarkdownHelpFiles"
               }
               . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
             env:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
               DOCS_FOLDER: ${{ parameters.docsFolder }}
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: update markdown help docs
             workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
               $UtilScriptPathArgs = @{
+                ProjectRoot          = $env:PROJECT_ROOT
                 PSakeFilepath = $env:PSAKE_FILEPATH
                 Task          = "UpdateManifest"
               }
@@ -59,11 +65,13 @@ stages:
             env:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: update module manifest
             workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
               $UtilScriptPathArgs = @{
+                ProjectRoot          = $env:PROJECT_ROOT
                 PSakeFilepath = $env:PSAKE_FILEPATH
                 Task          = "BumpVersion"
               }
@@ -71,11 +79,13 @@ stages:
             env:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: bump version
             workingDirectory: $(System.DefaultWorkingDirectory)
 
           - pwsh: |
               $UtilScriptPathArgs = @{
+                ProjectRoot          = $env:PROJECT_ROOT
                 PSakeFilepath = $env:PSAKE_FILEPATH
                 Task          = "GitCommit"
               }
@@ -84,10 +94,12 @@ stages:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
               SOURCE_BRANCH_NAME: $(Build.SourceBranchName)
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: commit and push changes
 
           - pwsh: |
               $UtilScriptPathArgs = @{
+                ProjectRoot          = $env:PROJECT_ROOT
                 PSakeFilepath = $env:PSAKE_FILEPATH
                 Task          = "CreateNuspecFile"
               }
@@ -96,10 +108,12 @@ stages:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
               STAGING_FOLDER: $(Build.ArtifactStagingDirectory)/PSSAToJunit
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: create nuspec file
 
           - pwsh: |
               $UtilScriptPathArgs = @{
+                ProjectRoot          = $env:PROJECT_ROOT
                 PSakeFilepath = $env:PSAKE_FILEPATH
                 Task          = "CreateExternalHelp"
               }
@@ -108,11 +122,13 @@ stages:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
               STAGING_FOLDER: $(Build.ArtifactStagingDirectory)/PSSAToJunit
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: create external help file
 
 
           - pwsh: |
               $UtilScriptPathArgs = @{
+                ProjectRoot          = $env:PROJECT_ROOT
                 PSakeFilepath = $env:PSAKE_FILEPATH
                 Task          = "MinimiseScriptFiles"
               }
@@ -121,6 +137,7 @@ stages:
               UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
               PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
               STAGING_FOLDER: $(Build.ArtifactStagingDirectory)/PSSAToJunit
+              PROJECT_ROOT: $(System.DefaultWorkingDirectory)
             displayName: create minimised module
 
           - task: ArchiveFiles@2

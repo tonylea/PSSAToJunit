@@ -16,18 +16,21 @@ steps:
   - pwsh: |
       $UtilScriptPathArgs = @{
         DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
+        ProjectRoot          = $env:PROJECT_ROOT
         Task                 = "InstallDependencies"
       }
       . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
     env:
       UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
       DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
+      PROJECT_ROOT: $(System.DefaultWorkingDirectory)
     displayName: install dependencies
     workingDirectory: $(System.DefaultWorkingDirectory)
 
   - pwsh: |
       $UtilScriptPathArgs = @{
         PSakeFilepath = $env:PSAKE_FILEPATH
+        ProjectRoot   = $env:PROJECT_ROOT
         Task          = "IntegrationTests"
       }
       . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
@@ -36,6 +39,7 @@ steps:
       PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
       TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
       INTEGRATION_TESTS_FOLDER: ${{ parameters.integrationTestsFolder }}
+      PROJECT_ROOT: $(System.DefaultWorkingDirectory)
     displayName: run pester tests
     workingDirectory: $(System.DefaultWorkingDirectory)
 
