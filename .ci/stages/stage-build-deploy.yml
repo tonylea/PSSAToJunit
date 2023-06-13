@@ -46,7 +46,7 @@ stages:
               . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
             env:
               ENTRY_SCRIPTPATH:  ${{ parameters.entryScriptPath }}
-              PSAKE_FILEPATH: $(System.DefaultWorkingDirectory)/.ci/scripts/build.psake.ps1
+              PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
               DOCS_FOLDER: ${{ parameters.docsFolder }}
               DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
             displayName: update markdown help docs
