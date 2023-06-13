@@ -20,14 +20,8 @@ param (
     $DependencyConfigPath,
 
     [System.IO.FileInfo]
-    $PSakeFilepath,
-
-    [Parameter(Mandatory)]
-    [System.IO.FileInfo]
-    $ProjectRoot
+    $PSakeFilepath
 )
-
-Set-Location -Path $ProjectRoot
 
 Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Blue
 
