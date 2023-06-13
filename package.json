@@ -1,6 +1,6 @@
 {
   "name": "pssatojunit",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Convert PSScriptAnalyzer results to Junit XML",
   "private": "true",
   "repository": {
