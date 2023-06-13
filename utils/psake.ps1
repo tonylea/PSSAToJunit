@@ -52,7 +52,18 @@ Task Init {
     Write-Host "`n"
 }
 
-Task UnitTests -depends Init {
+Task ImportDependantModules -depends Init {
+    Write-Host "`n$Lines`n"
+
+    $ModuleDependencies = (Import-PowerShellDataFile -Path $ManifestPath).RequiredModules
+    foreach ($Module in $ModuleDependencies) {
+        Import-Module -Name $Module -Force
+    }
+
+    Write-Host "`n"
+}
+
+Task UnitTests -depends Init, ImportDependantModules {
     Write-Host "`n$Lines`n"
 
     Import-Module -Name Pester -Force
@@ -87,7 +98,7 @@ Task UnitTests -depends Init {
     Write-Host "`n"
 }
 
-Task IntegrationTests -depends Init {
+Task IntegrationTests -depends Init, ImportDependantModules {
     Write-Host "`n$Lines`n"
 
     Import-Module -Name Pester -Force
