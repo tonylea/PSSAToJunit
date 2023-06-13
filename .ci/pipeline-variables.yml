@@ -2,10 +2,15 @@ variables:
   vmLinuxImage: "ubuntu-latest"
   vmWindowsImage: "windows-latest"
   vmMacosImage: "macos-latest"
-  testsPath: $(System.DefaultWorkingDirectory)/tests
-  testResultsPath: $(System.DefaultWorkingDirectory)/test-results
-  srcFolder: $(System.DefaultWorkingDirectory)/src
+  dependencyConfigPath: $(System.DefaultWorkingDirectory)/utils/dependencies.psd1
   docsFolder: $(System.DefaultWorkingDirectory)/docs
+  integrationTestsFolder: $(System.DefaultWorkingDirectory)/tests/integration-tests
+  psakeFilePath: $(System.DefaultWorkingDirectory)/utils/psake.ps1
+  srcFolder: $(System.DefaultWorkingDirectory)/src
+  testResultsPath: $(System.DefaultWorkingDirectory)/test-results
+  testsPath: $(System.DefaultWorkingDirectory)/tests
+  unitTestsFolder: $(System.DefaultWorkingDirectory)/tests/unit-tests
+  utilScriptPath: $(System.DefaultWorkingDirectory)/utils/utilEntryPoint.ps1
   # markdownlintCliVersion: "0.7.1"
   # psScriptAnalyzerVersion: "1.21.0"
   megaLinterFlavour: "megalinter-documentation"

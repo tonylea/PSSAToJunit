@@ -9,7 +9,7 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 # Source code
-[*.{cs,ps1,psd1,psm1}]
+[*.{ps1,psm1}]
 indent_size = 4
 
 # Shell scripts
@@ -33,3 +33,10 @@ max_line_length = off
 
 # [CHANGELOG.md]
 indent_size = false
+
+[*.psd1]
+charset = unset
+indent_size = unset
+indent_style = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset

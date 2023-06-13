@@ -1,7 +1,13 @@
 parameters:
-  - name: buildFolder
+  - name: dependencyConfigPath
+    type: string
+  - name: integrationTestsFolder
+    type: string
+  - name: psakeFilePath
     type: string
   - name: testResultsPath
+    type: string
+  - name: utilScriptPath
     type: string
   - name: vmLinuxImage
     type: string
@@ -28,7 +34,11 @@ stages:
           - template: ./step.integration-tests.yml
             parameters:
               operatingSystem: Linux
+              dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
+              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
+              psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
 
       - job: macosUnitTests
         displayName: "MacOS"
@@ -38,7 +48,11 @@ stages:
           - template: ./step.integration-tests.yml
             parameters:
               operatingSystem: macOS
+              dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
+              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
+              psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
 
       - job: windowsUnitTests
         displayName: "Windows"
@@ -48,4 +62,8 @@ stages:
           - template: ./step.integration-tests.yml
             parameters:
               operatingSystem: Windows
+              dependencyConfigPath: ${{ parameters.dependencyConfigPath }}
+              integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
+              psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
+              utilScriptPath: ${{ parameters.utilScriptPath }}
