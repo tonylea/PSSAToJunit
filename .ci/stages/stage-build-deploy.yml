@@ -50,6 +50,7 @@ stages:
             env:
               ENTRY_SCRIPTPATH:  $(System.DefaultWorkingDirectory)/.ci/scripts/build.ps1
               DOCS_FOLDER: ${{ parameters.docsFolder }}
+              DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
             displayName: update markdown help docs
             workingDirectory: $(System.DefaultWorkingDirectory)
 
