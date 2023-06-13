@@ -22,7 +22,11 @@
     "tags": [
       "PSSA",
       "PSScriptAnalyzer",
-      "Junit"
+      "Junit",
+      "PSEdition_Core",
+      "Windows",
+      "Linux",
+      "MacOS"
     ],
     "licenseUri": "https://mit-license.org",
     "projectUri": "https://github.com/tonylea/PSSAToJunit"
