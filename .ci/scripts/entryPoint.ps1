@@ -16,6 +16,10 @@ param (
     [System.String]
     $Task,
 
+    [Parameter()]
+    [Switch]
+    $ImportProjectModule,
+
     [System.IO.FileInfo]
     $DependencyConfigPath,
 
@@ -73,11 +77,9 @@ else {
     Write-Host "`nSTARTED TASK: Set environmental variables" -ForegroundColor Blue
     Set-BuildEnvironment -Force
 
-    if ($Task -like "UpdateMarkdownHelpFiles") {
+    if ($ImportProjectModule.IsPresent) {
         Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
-        Import-Module -Name $ENV:BHPSModuleManifest -Force -Verbose
-        Write-Host "Imported Functions:`n"
-        (Get-Module -Name pssatojunit).exportedcommands.Values.Name
+        Import-Module -Name $ENV:BHPSModuleManifest -Force
     }
 
     Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Green

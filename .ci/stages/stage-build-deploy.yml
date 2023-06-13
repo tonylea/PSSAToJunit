@@ -39,9 +39,7 @@ stages:
 
           - pwsh: |
               $EntryScriptPathArgs = @{
-                ResolveDependency    = $true
                 ImportProjectModule  = $true
-                DependencyConfigPath = $env:DEPENDENCY_CONFIG_PATH
                 Task                = "UpdateExternalHelpFile"
               }
               . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs

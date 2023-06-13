@@ -1,24 +1,12 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory)]
-    [System.IO.FileInfo]
-    $DependencyConfigPath,
-
-    [Parameter()]
-    [Switch]
-    $ResolveDependency,
-
     [Parameter()]
     [Switch]
     $ImportProjectModule,
 
     [Parameter(Mandatory)]
     [System.String]
-    $Task,
-
-    [Parameter()]
-    [System.String]
-    $OperatingSystem
+    $Task
 )
 
 # Init BuildHelpers
