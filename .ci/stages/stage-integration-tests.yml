@@ -7,7 +7,7 @@ parameters:
     type: string
   - name: testResultsPath
     type: string
-  - name: utilScriptPath
+  - name: entryScriptPath
     type: string
   - name: vmLinuxImage
     type: string
@@ -38,7 +38,7 @@ stages:
               integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
               psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
-              utilScriptPath: ${{ parameters.utilScriptPath }}
+              entryScriptPath: ${{ parameters.entryScriptPath }}
 
       - job: macosUnitTests
         displayName: "MacOS"
@@ -52,7 +52,7 @@ stages:
               integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
               psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
-              utilScriptPath: ${{ parameters.utilScriptPath }}
+              entryScriptPath: ${{ parameters.entryScriptPath }}
 
       - job: windowsUnitTests
         displayName: "Windows"
@@ -66,4 +66,4 @@ stages:
               integrationTestsFolder: ${{ parameters.integrationTestsFolder}}
               psakeFilePath: ${{ parameters.psakeFilePath }}
               testResultsPath: ${{ parameters.testResultsPath }}
-              utilScriptPath: ${{ parameters.utilScriptPath }}
+              entryScriptPath: ${{ parameters.entryScriptPath }}

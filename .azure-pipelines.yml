@@ -30,7 +30,7 @@ stages:
       psakeFilePath: $(psakeFilePath)
       testResultsPath: $(testResultsPath)
       unitTestsFolder: $(unitTestsFolder)
-      utilScriptPath: $(utilScriptPath)
+      entryScriptPath: $(entryScriptPath)
       vmLinuxImage: $(vmLinuxImage)
       vmMacosImage: $(vmMacosImage)
       vmWindowsImage: $(vmWindowsImage)
@@ -42,7 +42,7 @@ stages:
       integrationTestsFolder: $(integrationTestsFolder)
       psakeFilePath: $(psakeFilePath)
       testResultsPath: $(testResultsPath)
-      utilScriptPath: $(utilScriptPath)
+      entryScriptPath: $(entryScriptPath)
       vmLinuxImage: $(vmLinuxImage)
       vmMacosImage: $(vmMacosImage)
       vmWindowsImage: $(vmWindowsImage)
@@ -51,7 +51,7 @@ stages:
   - template: .ci/stages/stage-build-deploy.yml
     parameters:
       vmLinuxImage: $(vmLinuxImage)
-      utilScriptPath: $(utilScriptPath)
+      entryScriptPath: $(entryScriptPath)
       dependencyConfigPath: $(dependencyConfigPath)
       psakeFilePath: $(psakeFilePath)
       docsFolder: $(docsFolder)

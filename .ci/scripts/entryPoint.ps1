@@ -84,7 +84,7 @@ else {
 
     if ($Task -like "UpdateMarkdownHelpFiles") {
         Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
-        Import-Module -Name $ENV:BHPSModuleManifest -Force
+        Import-Module -Name $ENV:BHPSModuleManifest -Force -Verbose
     }
 
     Write-Host "`nSTARTED TASK: Invoke psake" -ForegroundColor Blue

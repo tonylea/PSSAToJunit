@@ -9,7 +9,7 @@ parameters:
     type: string
   - name: testResultsPath
     type: string
-  - name: utilScriptPath
+  - name: entryScriptPath
     type: string
 
 steps:
@@ -19,9 +19,9 @@ steps:
         ProjectRoot          = $env:PROJECT_ROOT
         Task                 = "InstallDependencies"
       }
-      . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+      . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
     env:
-      UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+      ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       DEPENDENCY_CONFIG_PATH: ${{ parameters.dependencyConfigPath }}
       PROJECT_ROOT: $(System.DefaultWorkingDirectory)
     displayName: install dependencies
@@ -33,9 +33,9 @@ steps:
         ProjectRoot   = $env:PROJECT_ROOT
         Task          = "IntegrationTests"
       }
-      . $env:UTIL_SCRIPTPATH @UtilScriptPathArgs
+      . $env:ENTRY_SCRIPTPATH @UtilScriptPathArgs
     env:
-      UTIL_SCRIPTPATH: ${{ parameters.utilScriptPath }}
+      ENTRY_SCRIPTPATH: ${{ parameters.entryScriptPath }}
       PSAKE_FILEPATH: ${{ parameters.psakeFilePath }}
       TEST_RESULTS_PATH: ${{ parameters.testResultsPath }}
       INTEGRATION_TESTS_FOLDER: ${{ parameters.integrationTestsFolder }}
