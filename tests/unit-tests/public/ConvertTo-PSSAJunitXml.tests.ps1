@@ -5,6 +5,8 @@ Describe "ConvertTo-PSSAJunitXml" {
         $FunctionName = "ConvertTo-PSSAJunitXml"
 
         $FunctionPath = $PSCommandPath -replace ".+unit-tests", $ENV:BHPSModulePath -replace "\.tests"
+        Write-Host "PSCommand: $PSCommandPath" -ForegroundColor DarkYellow
+        Write-Host "Loading function from $FunctionPath" -ForegroundColor DarkYellow
         . $FunctionPath
 
         $FunctionDependencies = @{
