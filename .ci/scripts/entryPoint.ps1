@@ -24,10 +24,7 @@ param (
 
     [Parameter(Mandatory)]
     [System.IO.FileInfo]
-    $ProjectRoot,
-
-    [Switch]
-    $ImportProjectModule
+    $ProjectRoot
 )
 
 Set-Location -Path $ProjectRoot
@@ -85,9 +82,11 @@ else {
     if ($Task -like "UpdateMarkdownHelpFiles") {
         Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
         Import-Module -Name $ENV:BHPSModuleManifest -Force -Verbose
+        Write-Host "Imported Functions:`n"
+        (Get-Module -Name pssatojunit).exportedcommands.Values.Name
     }
 
-    Write-Host "`nSTARTED TASK: Invoke psake" -ForegroundColor Blue
+    Write-Host "`nSTARTED TASK: $Task" -ForegroundColor Green
 
     $InvokePsakeArgs = @{
         buildFile = $PSakeFilepath

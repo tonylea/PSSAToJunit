@@ -126,7 +126,10 @@ Task IntegrationTests -depends Init, ImportDependantModules {
 Task UpdateMarkdownHelpFiles -depends Init, ImportDependantModules {
     Write-Host "`n$Lines`n"
 
-    Import-Module -Name $ManifestPath -Force
+    Write-Host "`nSTARTED TASK: Importing project module into scope" -ForegroundColor Blue
+    Import-Module -Name  $ManifestPath -Force -Verbose
+    Write-Host "Imported Functions:`n"
+    (Get-Module -Name pssatojunit).exportedcommands.Values.Name
 
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage # -AlphabeticParamsOrder -Force -UpdateInputOutput
 }
