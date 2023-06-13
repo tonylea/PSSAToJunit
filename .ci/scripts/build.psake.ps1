@@ -28,7 +28,7 @@ Task Init {
     Write-Host "`n"
 }
 
-Task UpdateExternalHelpFile -Depends Init {
+Task UpdateMarkdownHelpFiles -Depends Init {
     Write-Host "`n$Lines`n"
 
     Update-MarkdownHelpModule -Path $DocsHelpFolder -RefreshModulePage
