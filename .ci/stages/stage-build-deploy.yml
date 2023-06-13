@@ -40,6 +40,7 @@ stages:
           - pwsh: |
               $EntryScriptPathArgs = @{
                 ImportProjectModule  = $true
+                PSakeFilepath = $env:PSAKE_FILEPATH
                 Task                = "UpdateMarkdownHelpFiles"
               }
               . $env:ENTRY_SCRIPTPATH @EntryScriptPathArgs
