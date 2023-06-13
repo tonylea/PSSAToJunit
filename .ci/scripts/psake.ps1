@@ -207,14 +207,16 @@ Task GitCommit -depends Init {
     $PackageJson = Get-Content -Path $PackageJsonPath | ConvertFrom-Json
     $Version = $PackageJson.version
 
-    git commit -m "chore(release): $Version [skip ci]"
+    $GitMessage = "chore(release): $Version [skip ci]"
+
+    git commit -m $GitMessage
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "An error occurred while running the 'git commit -m "chore(release): $Version [skip ci]"' command."
+        Write-Error "An error occurred while running the 'git commit -m "$GitMessage"' command."
     }
 
     git tag -a v$Version -m $GitMessage
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "An error occurred while running the 'git tag -a v$Version -m $GitMessage' command."
+        Write-Error "An error occurred while running the 'git tag -a v$Version -m "$GitMessage"' command."
     }
 
     git push --follow-tags origin HEAD:$SourceBranchName
