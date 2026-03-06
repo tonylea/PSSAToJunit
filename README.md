@@ -15,9 +15,7 @@
 ![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/PSSAToJunit)
 
 A simple PowerShell module to convert PSScriptAnalyzer results to jUnit.
-Intended to be used in GitHub or Azure DevOps pipelines.
-
-This was created because I couldn't find a simple way to publish PSScriptAnalyzer results in Azure DevOps.
+Intended to be used in CI/CD pipelines (GitHub Actions, Azure DevOps, etc.).
 
 ## Installation
 
@@ -28,22 +26,21 @@ Install-Module -Name PSSAToJunit
 ## How to use
 
 This is intended for use in a pipeline.
-The following example is for Azure DevOps.
+The following example is for GitHub Actions.
 
 ```yaml
-- task: PowerShell@2
-  displayName: 'Run PSScriptAnalyzer'
-  inputs:
-    targetType: 'inline'
-    script: |
-      Invoke-ScriptAnalyzer -Path ./src/ -Recurse -Severity Warning, Error | ConvertTo-PSSAJunitXml | Export-PSSAJunitXml -FilePath "./test.xml"
+- name: Run PSScriptAnalyzer
+  shell: pwsh
+  run: |
+    Invoke-ScriptAnalyzer -Path ./src/ -Recurse -Severity Warning, Error | ConvertTo-PSSAJunitXml | Export-PSSAJunitXml -FilePath "./test.xml"
 
-- task: PublishTestResults@2
-  displayName: 'Publish PSScriptAnalyzer results'
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/test.xml'
-    testRunTitle: 'PSScriptAnalyzer'
+- name: Publish Test Results
+  uses: dorny/test-reporter@v1
+  if: always()
+  with:
+    name: PSScriptAnalyzer
+    path: test.xml
+    reporter: java-junit
 ```
 
 ## Support

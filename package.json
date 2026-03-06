@@ -46,11 +46,11 @@
     "mega-linter-runner": "^7.0.0",
     "npm-check-updates": "^16.10.12",
     "secretlint": "^6.2.3",
-    "standard-version": "9.5.0"
+    "commit-and-tag-version": "^12.5.0"
   },
   "scripts": {
     "prepare": "husky install",
-    "release": "standard-version",
+    "release": "commit-and-tag-version",
     "upgrade": "ncu -u && npm install",
     "update": "npm run upgrade",
     "version-bump": "npm run release -- --skip.commit --skip.tag",
