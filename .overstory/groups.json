@@ -8,5 +8,15 @@
 		"status": "active",
 		"createdAt": "2026-03-06T21:05:56.057Z",
 		"completedAt": null
+	},
+	{
+		"id": "group-35195ed9",
+		"name": "issue-15-cicd",
+		"memberIssueIds": [
+			"PSSAToJunit-d774"
+		],
+		"status": "active",
+		"createdAt": "2026-03-06T22:16:35.190Z",
+		"completedAt": null
 	}
 ]
