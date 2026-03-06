@@ -1,0 +1,126 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    # Skip release commits to prevent infinite loops.
+    # .versionrc.json also includes [skip ci] in the commit message.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Install PowerShell dependencies
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck
+          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name BuildHelpers -Force
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/unit-tests'
+          $config.Run.Exit = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = './test-results-unit.xml'
+          Invoke-Pester -Configuration $config
+
+      - name: Run integration tests
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/integration-tests'
+          $config.Run.Exit = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = './test-results-integration.xml'
+          Invoke-Pester -Configuration $config
+
+      - name: Check for releasable commits
+        id: check
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          else
+            COUNT=$(git log "${LAST_TAG}..HEAD" --format="%s%n%b" | grep -cE "^(feat|fix)(\(.+\))?!?:|BREAKING CHANGE" || true)
+            if [ "$COUNT" -gt "0" ]; then
+              echo "should_release=true" >> $GITHUB_OUTPUT
+            else
+              echo "should_release=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Version bump
+        if: steps.check.outputs.should_release == 'true'
+        run: npx commit-and-tag-version --skip.tag
+
+      - name: Get new version
+        if: steps.check.outputs.should_release == 'true'
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Update module manifest version
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $psd1 = './src/PSSAToJunit.psd1'
+          (Get-Content $psd1) -replace "ModuleVersion = '\d+\.\d+\.\d+'", "ModuleVersion = '$version'" | Set-Content $psd1
+
+      - name: Amend release commit to include psd1
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          git add src/PSSAToJunit.psd1
+          git commit --amend --no-edit
+
+      - name: Create release tag
+        if: steps.check.outputs.should_release == 'true'
+        run: git tag -a "v${{ steps.version.outputs.version }}" HEAD -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]"
+
+      - name: Push commit and tag
+        if: steps.check.outputs.should_release == 'true'
+        run: git push --follow-tags origin main
+
+      - name: Publish to PowerShell Gallery
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        env:
+          PS_GALLERY_API_KEY: ${{ secrets.PS_GALLERY_API_KEY }}
+        run: |
+          Publish-Module -Path ./src -NuGetApiKey $env:PS_GALLERY_API_KEY -Verbose
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.should_release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+            --title "v${{ steps.version.outputs.version }}" \
+            --generate-notes

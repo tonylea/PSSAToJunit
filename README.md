@@ -1,6 +1,7 @@
 # PSSAToJunit powershell module
 
 ![maintenance-status](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
+![Release](https://github.com/tonylea/PSSAToJunit/actions/workflows/release.yml/badge.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/tonylea/PSSAToJunit)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/tonylea/PSSAToJunit)
 ![GitHub Release Date](https://img.shields.io/github/release-date/tonylea/PSSAToJunit)
