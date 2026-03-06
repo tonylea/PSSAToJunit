@@ -20,15 +20,25 @@ function Get-TestCaseXml {
 
         [Parameter()]
         [Int]
-        $Line
+        $Line,
+
+        [Parameter()]
+        [String]
+        $RuleName,
+
+        [Parameter()]
+        [String]
+        $Extent
     )
 
     return [System.Xml.XmlDocument]@"
 <testcase id="" name="$TestCaseName" time="0.001">
     <failure message="$TestCasePath">
+RULE: $RuleName
 $($Severity.ToUpper()): $TestCaseMessage
 File: $TestCasePath
 Line: $Line
+Extent: $Extent
     </failure>
 </testcase>
 "@

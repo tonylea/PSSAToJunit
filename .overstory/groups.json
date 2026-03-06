@@ -1,0 +1,12 @@
+[
+	{
+		"id": "group-ddfb7f8c",
+		"name": "issue-13-rulename",
+		"memberIssueIds": [
+			"PSSAToJunit-dc25"
+		],
+		"status": "active",
+		"createdAt": "2026-03-06T21:05:56.057Z",
+		"completedAt": null
+	}
+]

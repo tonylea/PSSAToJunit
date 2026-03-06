@@ -23,6 +23,8 @@ function ConvertTo-JunitXml {
                     TestCaseMessage = $FailedTest.Message
                     TestCasePath    = $FailedTest.ScriptPath
                     Line            = $FailedTest.Line
+                    RuleName        = $FailedTest.RuleName
+                    Extent          = $FailedTest.Extent
                 }
                 [System.Xml.XmlDocument]$TestCaseXml = Get-TestCaseXml @GetTestCaseXmlArgs
 

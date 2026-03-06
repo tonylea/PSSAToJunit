@@ -44,6 +44,8 @@ function ConvertTo-PSSAJunitXml {
                             Message    = $Result.Message
                             Line       = $Result.Line
                             ScriptPath = $Result.ScriptPath
+                            RuleName   = $Result.RuleName
+                            Extent     = $Result.Extent.Text
                         }
                     }
                 }
