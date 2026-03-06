@@ -28,7 +28,7 @@ Describe "Get-TestCaseXml" {
 
         It "Does not contain untested parameters" {
             $ParameterInfo = $Function.Parameters
-            $ParameterInfo.Count - 11 | Should -Be 5
+            $ParameterInfo.Count - 11 | Should -Be 7
         }
 
         It "Has a 'TestCaseName' parameter" {
@@ -49,6 +49,14 @@ Describe "Get-TestCaseXml" {
 
         It "Has a 'Line' parameter" {
             $Function | Should -HaveParameter Line -Type System.Int32
+        }
+
+        It "Has a 'RuleName' parameter" {
+            $Function | Should -HaveParameter RuleName -Type System.String
+        }
+
+        It "Has a 'Extent' parameter" {
+            $Function | Should -HaveParameter Extent -Type System.String
         }
     }
 }

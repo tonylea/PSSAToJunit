@@ -31,6 +31,13 @@ Describe "Integration Tests" {
             ConvertTo-PSSAJunitXml -PSScriptAnalyzerResult $PSScriptAnalyzerResults -TestName "CustomTestName" | Should -Not -BeNullOrEmpty
         }
 
+        It "Should include RuleName and Extent in the failure output" {
+            $PSScriptAnalyzerResults = Invoke-ScriptAnalyzer -Path $SampleBadScript
+            $Result = ConvertTo-PSSAJunitXml -PSScriptAnalyzerResult $PSScriptAnalyzerResults
+            $Result.OuterXml | Should -Match "RULE:"
+            $Result.OuterXml | Should -Match "Extent:"
+        }
+
         # It "Should convert PSScriptAnalyzer null results to Junit XML" {}
     }
 
