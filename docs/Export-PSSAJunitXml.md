@@ -81,7 +81,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### System.Xml.XmlDocument
 ## OUTPUTS
 
-### System.Xml.XmlDocument
+### None
 ## NOTES
 
 ## RELATED LINKS

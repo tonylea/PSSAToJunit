@@ -22,8 +22,10 @@
         "utils/**",
         "commitlint.config.js",
         "conventionalCommit.json",
-        "helpers/**",
+        "code-coverage.xml",
         "node_modules/**",
+        "test-results/**",
+        "test-results-*.xml",
         "tests/**",
         "package-lock.json",
         "package.json"

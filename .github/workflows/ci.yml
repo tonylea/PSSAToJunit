@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    # Skip release commits to prevent infinite loops.
+    # .versionrc.json also includes [skip ci] in the commit message.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Markdown lint
+        run: |
+          mkdir -p test-results
+          npx markdownlint-cli2
+
+      - name: Spell check
+        run: npx cspell lint "**"
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Force
+
+      - name: PowerShell lint
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path ./src -Recurse -Severity Error,Warning
+          if ($results) {
+            $results | Format-Table -AutoSize
+            exit 1
+          }
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+
+    # Skip release commits to prevent infinite loops.
+    # .versionrc.json also includes [skip ci] in the commit message.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PowerShell dependencies
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck
+          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name BuildHelpers -Force
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/unit-tests'
+          $config.Run.Exit = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = './test-results-unit.xml'
+          $config.CodeCoverage.Enabled = $true
+          $config.CodeCoverage.OutputFormat = 'JaCoCo'
+          $config.CodeCoverage.OutputPath = './code-coverage.xml'
+          $config.CodeCoverage.Path = @('./src/classes', './src/private', './src/public')
+          $config.CodeCoverage.CoveragePercentTarget = 75
+          Invoke-Pester -Configuration $config
+
+      - name: Run integration tests
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/integration-tests'
+          $config.Run.Exit = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = './test-results-integration.xml'
+          Invoke-Pester -Configuration $config
+
+  test-windows:
+    needs: lint
+    runs-on: windows-latest
+
+    # Skip release commits to prevent infinite loops.
+    # .versionrc.json also includes [skip ci] in the commit message.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PowerShell dependencies
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck
+          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name BuildHelpers -Force
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/unit-tests'
+          $config.Run.Exit = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = './test-results-unit.xml'
+          $config.CodeCoverage.Enabled = $true
+          $config.CodeCoverage.OutputFormat = 'JaCoCo'
+          $config.CodeCoverage.OutputPath = './code-coverage.xml'
+          $config.CodeCoverage.Path = @('./src/classes', './src/private', './src/public')
+          $config.CodeCoverage.CoveragePercentTarget = 75
+          Invoke-Pester -Configuration $config

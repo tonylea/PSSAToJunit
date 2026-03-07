@@ -11,12 +11,10 @@ Describe "$($ENV:BHProjectName) Manifest" {
         $ManifestHash = Import-PowerShellDataFile -Path $ManifestPath
     }
 
-    if (!$IsLinux) {
-        It "Has a valid manifest" {
-            {
-                $null = Test-ModuleManifest -Path $ManifestPath -ErrorAction Stop -WarningAction SilentlyContinue
-            } | Should -Not -Throw
-        }
+    It "Has a valid manifest" {
+        {
+            $null = Test-ModuleManifest -Path $ManifestPath -ErrorAction Stop -WarningAction SilentlyContinue
+        } | Should -Not -Throw
     }
 
     It "Has a valid root module" {

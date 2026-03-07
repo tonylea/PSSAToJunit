@@ -1,6 +1,5 @@
 function Export-PSSAJunitXml {
     [CmdletBinding()]
-    [OutputType([System.Xml.XmlDocument])]
     param (
         [Parameter(Mandatory, ValueFromPipeline = $true)]
         [System.Xml.XmlDocument]

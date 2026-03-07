@@ -125,7 +125,6 @@ dist
 # Local Devlopment                            #
 ###############################################
 
-.env
 report/
 ScriptAnalyzerResult.xml
 temp-files/
