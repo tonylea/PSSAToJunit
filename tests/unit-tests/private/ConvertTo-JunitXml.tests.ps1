@@ -32,7 +32,7 @@ Describe "ConvertTo-JunitXml" {
 
         It "Does not contain untested parameters" {
             $ParameterInfo = $Function.Parameters
-            $ParameterInfo.Count - 11 | Should -Be 2
+            $ParameterInfo.Count - 12 | Should -Be 2
         }
 
         It "Has a mandatory 'TestSuites' parameter" {
