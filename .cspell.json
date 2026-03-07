@@ -17,6 +17,7 @@
         ".vscode/**",
         "build/**",
         "helpers/**",
+        "scripts/**",
         "megalinter-reports/**",
         "utils/**",
         "commitlint.config.js",
