@@ -14,7 +14,7 @@ Converts PSScriptAnalyzer results to JUnit XML format.
 
 ```
 ConvertTo-PSSAJunitXml [-PSScriptAnalyzerResult] <DiagnosticRecord[]> [[-TestName] <String>]
- [[-Severity] <String[]>] [<CommonParameters>]
+ [[-Severity] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -42,6 +42,21 @@ PS C:\> $JunitXml = Invoke-ScriptAnalyzer -Path .\MyScript.ps1 | ConvertTo-PSSAJ
 This example passes the results of `Invoke-ScriptAnalyzer` to `ConvertTo-PSSAJunitXml` through the pipeline.
 
 ## PARAMETERS
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -PSScriptAnalyzerResult
 The results of `Invoke-ScriptAnalyzer` command.
