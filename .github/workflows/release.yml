@@ -129,7 +129,7 @@ jobs:
 
       - name: Push commit and tag
         if: steps.check.outputs.should_release == 'true'
-        run: git push --follow-tags origin main
+        run: git push --follow-tags origin HEAD:main
 
       - name: Create staging folder
         if: steps.check.outputs.should_release == 'true'
