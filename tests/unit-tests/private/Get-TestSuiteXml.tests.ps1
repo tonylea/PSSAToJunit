@@ -27,7 +27,7 @@ Describe "Get-TestSuiteXml" {
 
         It "Does not contain untested parameters" {
             $ParameterInfo = $Function.Parameters
-            $ParameterInfo.Count - 11 | Should -Be 1
+            $ParameterInfo.Count - 12 | Should -Be 1
         }
 
         It "Has a mandatory 'TestSuiteName' parameter" {

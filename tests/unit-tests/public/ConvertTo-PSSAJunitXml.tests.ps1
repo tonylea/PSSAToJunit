@@ -4,6 +4,8 @@ Describe "ConvertTo-PSSAJunitXml" {
 
         $FunctionName = "ConvertTo-PSSAJunitXml"
 
+        Import-Module PSScriptAnalyzer -ErrorAction Stop
+
         $FunctionPath = $PSCommandPath -replace ".+unit-tests", $ENV:BHPSModulePath -replace "\.tests"
         . $FunctionPath
 
@@ -30,7 +32,7 @@ Describe "ConvertTo-PSSAJunitXml" {
 
         It "Does not contain untested parameters" {
             $ParameterInfo = $Function.Parameters
-            $ParameterInfo.Count - 11 | Should -Be 3
+            $ParameterInfo.Count - 12 | Should -Be 3
         }
 
         It "Has a mandatory 'PSScriptAnalyzerResult' parameter" {

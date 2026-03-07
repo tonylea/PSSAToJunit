@@ -1,0 +1,276 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    # Skip release commits to prevent infinite loops.
+    # .versionrc.json also includes [skip ci] in the commit message.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Markdown lint
+        run: npx markdownlint-cli2
+
+      - name: Spell check
+        run: npx cspell lint "**"
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Force
+
+      - name: PowerShell lint
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path ./src -Recurse -Severity Error,Warning
+          if ($results) {
+            $results | Format-Table -AutoSize
+            exit 1
+          }
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+
+    # Skip release commits to prevent infinite loops.
+    # .versionrc.json also includes [skip ci] in the commit message.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PowerShell dependencies
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck
+          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name BuildHelpers -Force
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/unit-tests'
+          $config.Run.Exit = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = './test-results-unit.xml'
+          $config.CodeCoverage.Enabled = $true
+          $config.CodeCoverage.OutputFormat = 'JaCoCo'
+          $config.CodeCoverage.OutputPath = './code-coverage.xml'
+          $config.CodeCoverage.Path = @('./src/classes', './src/private', './src/public')
+          $config.CodeCoverage.CoveragePercentTarget = 75
+          Invoke-Pester -Configuration $config
+
+      - name: Run integration tests
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/integration-tests'
+          $config.Run.Exit = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = './test-results-integration.xml'
+          Invoke-Pester -Configuration $config
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Check for releasable commits
+        id: check
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          else
+            COUNT=$(git log "${LAST_TAG}..HEAD" --format="%s%n%b" | grep -cE "^(feat|fix)(\(.+\))?!?:|BREAKING CHANGE" || true)
+            if [ "$COUNT" -gt "0" ]; then
+              echo "should_release=true" >> $GITHUB_OUTPUT
+            else
+              echo "should_release=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Version bump
+        if: steps.check.outputs.should_release == 'true'
+        run: npx commit-and-tag-version --skip.tag
+
+      - name: Get new version
+        if: steps.check.outputs.should_release == 'true'
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Install PowerShell dependencies
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name PlatyPS -Force
+          Install-Module -Name BuildHelpers -Force
+
+      - name: Install manifest dependencies
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $ManifestPath = './src/PSSAToJunit.psd1'
+          $Manifest = Import-PowerShellDataFile -Path $ManifestPath
+          foreach ($Module in $Manifest.RequiredModules) {
+            $ModuleName = if ($Module -is [string]) { $Module } else { $Module.ModuleName }
+            Install-Module -Name $ModuleName -Force -SkipPublisherCheck
+          }
+
+      - name: Update module manifest
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $NewVersion = "${{ steps.version.outputs.version }}"
+          $Psd1Path = './src/PSSAToJunit.psd1'
+          $PackageJson = Get-Content './package.json' | ConvertFrom-Json
+          $Mp = $PackageJson.manifestProperties
+
+          $ManifestParams = @{ Path = $Psd1Path; ModuleVersion = $NewVersion }
+          if ($Mp.author)               { $ManifestParams.Author = $Mp.author }
+          if ($Mp.companyName)          { $ManifestParams.CompanyName = $Mp.companyName }
+          if ($Mp.compatiblePSEditions) { $ManifestParams.CompatiblePSEditions = $Mp.compatiblePSEditions }
+          if ($Mp.copyright)            { $ManifestParams.Copyright = $Mp.copyright }
+          if ($PackageJson.description) { $ManifestParams.Description = $PackageJson.description }
+          if ($Mp.guid)                 { $ManifestParams.Guid = $Mp.guid }
+          if ($Mp.licenseUri)           { $ManifestParams.LicenseUri = $Mp.licenseUri }
+          if ($Mp.powerShellVersion)    { $ManifestParams.PowerShellVersion = $Mp.powerShellVersion }
+          if ($Mp.projectUri)           { $ManifestParams.ProjectUri = $Mp.projectUri }
+          if ($Mp.requiredModules)      { $ManifestParams.RequiredModules = $Mp.requiredModules }
+          if ($Mp.requiredModules)      { $ManifestParams.ExternalModuleDependencies = $Mp.requiredModules }
+          if ($Mp.tags)                 { $ManifestParams.Tags = $Mp.tags }
+
+          Update-ModuleManifest @ManifestParams
+
+      - name: Update markdown help docs
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          Import-Module -Name PSScriptAnalyzer -Force
+          Import-Module -Name ./src/PSSAToJunit.psd1 -Force
+          Import-Module -Name PlatyPS -Force
+          Update-MarkdownHelpModule -Path ./docs -RefreshModulePage -AlphabeticParamsOrder -Force
+
+      - name: Amend release commit
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          git add src/PSSAToJunit.psd1 docs/
+          git commit --amend --no-edit
+
+      - name: Create release tag
+        if: steps.check.outputs.should_release == 'true'
+        run: git tag -a "v${{ steps.version.outputs.version }}" HEAD -m "chore(release): v${{ steps.version.outputs.version }} [skip ci]"
+
+      - name: Push commit and tag
+        if: steps.check.outputs.should_release == 'true'
+        run: git push --follow-tags origin main
+
+      - name: Create staging folder
+        if: steps.check.outputs.should_release == 'true'
+        run: mkdir -p staging/PSSAToJunit
+
+      - name: Create nuspec file
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $Manifest = Import-PowerShellDataFile -Path './src/PSSAToJunit.psd1'
+          $Version = "${{ steps.version.outputs.version }}"
+          $NuspecContent = @"
+          <?xml version="1.0"?>
+          <package>
+            <metadata>
+              <id>PSSAToJunit</id>
+              <version>$Version</version>
+              <authors>$($Manifest.Author)</authors>
+              <description>$($Manifest.Description)</description>
+            </metadata>
+          </package>
+          "@
+          Set-Content -Path './staging/PSSAToJunit/PSSAToJunit.nuspec' -Value $NuspecContent
+
+      - name: Create external help file
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          Import-Module -Name PlatyPS -Force
+          New-ExternalHelp -Path ./docs -OutputPath ./staging/PSSAToJunit/en-GB -Force
+
+      - name: Minimise module
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $StagingPsm1 = './staging/PSSAToJunit/PSSAToJunit.psm1'
+          foreach ($Scope in @('classes', 'private', 'public')) {
+            $Files = Get-ChildItem -Path "./src/$Scope" -Filter '*.ps1' -ErrorAction SilentlyContinue
+            foreach ($File in $Files) {
+              Get-Content -Path $File | Add-Content -Path $StagingPsm1
+            }
+          }
+          Copy-Item -Path './src/PSSAToJunit.psd1' -Destination './staging/PSSAToJunit/'
+
+      - name: Create module archive
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          cd staging
+          zip -r "../PSSAToJunit-${{ steps.version.outputs.version }}.zip" PSSAToJunit/
+
+      - name: Publish to PowerShell Gallery
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        env:
+          PS_GALLERY_API_KEY: ${{ secrets.PS_GALLERY_API_KEY }}
+        run: |
+          Publish-Module -Path ./staging/PSSAToJunit -NuGetApiKey $env:PS_GALLERY_API_KEY -Verbose
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.should_release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+            "PSSAToJunit-${{ steps.version.outputs.version }}.zip#Module Archive" \
+            --title "v${{ steps.version.outputs.version }}" \
+            --generate-notes
