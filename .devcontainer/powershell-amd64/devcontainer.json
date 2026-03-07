@@ -1,6 +1,6 @@
 {
   "name": "PowerShell-AMD64",
-  "image": "mcr.microsoft.com/powershell:lts-debian-11",
+  "image": "mcr.microsoft.com/powershell:lts-debian-12",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {},
     "ghcr.io/devcontainers/features/node:1": {}
