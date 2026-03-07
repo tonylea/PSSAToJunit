@@ -47,7 +47,7 @@ module.exports = {
       emoji: '💄',
       value: 'style'
     },
-    test: {
+    revert: {
       description: 'Reverts a previous commit',
       emoji: '🪃',
       value: 'revert'
