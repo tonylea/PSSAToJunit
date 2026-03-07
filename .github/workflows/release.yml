@@ -77,6 +77,7 @@ jobs:
           $config.CodeCoverage.OutputFormat = 'JaCoCo'
           $config.CodeCoverage.OutputPath = './code-coverage.xml'
           $config.CodeCoverage.Path = @('./src/classes', './src/private', './src/public')
+          $config.CodeCoverage.CoveragePercentTarget = 75
           Invoke-Pester -Configuration $config
 
       - name: Run integration tests
