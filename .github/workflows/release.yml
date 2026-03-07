@@ -73,6 +73,10 @@ jobs:
           $config.Run.Exit = $true
           $config.TestResult.Enabled = $true
           $config.TestResult.OutputPath = './test-results-unit.xml'
+          $config.CodeCoverage.Enabled = $true
+          $config.CodeCoverage.OutputFormat = 'JaCoCo'
+          $config.CodeCoverage.OutputPath = './code-coverage.xml'
+          $config.CodeCoverage.Path = @('./src/classes', './src/private', './src/public')
           Invoke-Pester -Configuration $config
 
       - name: Run integration tests
@@ -135,18 +139,64 @@ jobs:
         id: version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - name: Update module manifest version
+      - name: Install PowerShell dependencies
         if: steps.check.outputs.should_release == 'true'
         shell: pwsh
         run: |
-          $version = "${{ steps.version.outputs.version }}"
-          $psd1 = './src/PSSAToJunit.psd1'
-          (Get-Content $psd1) -replace "ModuleVersion = '\d+\.\d+\.\d+'", "ModuleVersion = '$version'" | Set-Content $psd1
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name PlatyPS -Force
+          Install-Module -Name BuildHelpers -Force
 
-      - name: Amend release commit to include psd1
+      - name: Install manifest dependencies
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $ManifestPath = './src/PSSAToJunit.psd1'
+          $Manifest = Import-PowerShellDataFile -Path $ManifestPath
+          foreach ($Module in $Manifest.RequiredModules) {
+            $ModuleName = if ($Module -is [string]) { $Module } else { $Module.ModuleName }
+            Install-Module -Name $ModuleName -Force -SkipPublisherCheck
+          }
+
+      - name: Update module manifest
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $NewVersion = "${{ steps.version.outputs.version }}"
+          $Psd1Path = './src/PSSAToJunit.psd1'
+          $PackageJson = Get-Content './package.json' | ConvertFrom-Json
+          $Mp = $PackageJson.manifestProperties
+
+          $ManifestParams = @{ Path = $Psd1Path; ModuleVersion = $NewVersion }
+          if ($Mp.author)               { $ManifestParams.Author = $Mp.author }
+          if ($Mp.companyName)          { $ManifestParams.CompanyName = $Mp.companyName }
+          if ($Mp.compatiblePSEditions) { $ManifestParams.CompatiblePSEditions = $Mp.compatiblePSEditions }
+          if ($Mp.copyright)            { $ManifestParams.Copyright = $Mp.copyright }
+          if ($PackageJson.description) { $ManifestParams.Description = $PackageJson.description }
+          if ($Mp.guid)                 { $ManifestParams.Guid = $Mp.guid }
+          if ($Mp.licenseUri)           { $ManifestParams.LicenseUri = $Mp.licenseUri }
+          if ($Mp.powerShellVersion)    { $ManifestParams.PowerShellVersion = $Mp.powerShellVersion }
+          if ($Mp.projectUri)           { $ManifestParams.ProjectUri = $Mp.projectUri }
+          if ($Mp.requiredModules)      { $ManifestParams.RequiredModules = $Mp.requiredModules }
+          if ($Mp.requiredModules)      { $ManifestParams.ExternalModuleDependencies = $Mp.requiredModules }
+          if ($Mp.tags)                 { $ManifestParams.Tags = $Mp.tags }
+
+          Update-ModuleManifest @ManifestParams
+
+      - name: Update markdown help docs
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          Import-Module -Name PSScriptAnalyzer -Force
+          Import-Module -Name ./src/PSSAToJunit.psd1 -Force
+          Import-Module -Name PlatyPS -Force
+          Update-MarkdownHelpModule -Path ./docs -RefreshModulePage -AlphabeticParamsOrder -Force
+
+      - name: Amend release commit
         if: steps.check.outputs.should_release == 'true'
         run: |
-          git add src/PSSAToJunit.psd1
+          git add src/PSSAToJunit.psd1 docs/
           git commit --amend --no-edit
 
       - name: Create release tag
@@ -157,14 +207,54 @@ jobs:
         if: steps.check.outputs.should_release == 'true'
         run: git push --follow-tags origin main
 
-      - name: Install PowerShell dependencies
+      - name: Create staging folder
+        if: steps.check.outputs.should_release == 'true'
+        run: mkdir -p staging/PSSAToJunit
+
+      - name: Create nuspec file
         if: steps.check.outputs.should_release == 'true'
         shell: pwsh
         run: |
-          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-          Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck
-          Install-Module -Name PSScriptAnalyzer -Force
-          Install-Module -Name BuildHelpers -Force
+          $Manifest = Import-PowerShellDataFile -Path './src/PSSAToJunit.psd1'
+          $Version = "${{ steps.version.outputs.version }}"
+          $NuspecContent = @"
+          <?xml version="1.0"?>
+          <package>
+            <metadata>
+              <id>PSSAToJunit</id>
+              <version>$Version</version>
+              <authors>$($Manifest.Author)</authors>
+              <description>$($Manifest.Description)</description>
+            </metadata>
+          </package>
+          "@
+          Set-Content -Path './staging/PSSAToJunit/PSSAToJunit.nuspec' -Value $NuspecContent
+
+      - name: Create external help file
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          Import-Module -Name PlatyPS -Force
+          New-ExternalHelp -Path ./docs -OutputPath ./staging/PSSAToJunit/en-GB -Force
+
+      - name: Minimise module
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          $StagingPsm1 = './staging/PSSAToJunit/PSSAToJunit.psm1'
+          foreach ($Scope in @('classes', 'private', 'public')) {
+            $Files = Get-ChildItem -Path "./src/$Scope" -Filter '*.ps1' -ErrorAction SilentlyContinue
+            foreach ($File in $Files) {
+              Get-Content -Path $File | Add-Content -Path $StagingPsm1
+            }
+          }
+          Copy-Item -Path './src/PSSAToJunit.psd1' -Destination './staging/PSSAToJunit/'
+
+      - name: Create module archive
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          cd staging
+          zip -r "../PSSAToJunit-${{ steps.version.outputs.version }}.zip" PSSAToJunit/
 
       - name: Publish to PowerShell Gallery
         if: steps.check.outputs.should_release == 'true'
@@ -172,7 +262,7 @@ jobs:
         env:
           PS_GALLERY_API_KEY: ${{ secrets.PS_GALLERY_API_KEY }}
         run: |
-          Publish-Module -Path ./src -NuGetApiKey $env:PS_GALLERY_API_KEY -Verbose
+          Publish-Module -Path ./staging/PSSAToJunit -NuGetApiKey $env:PS_GALLERY_API_KEY -Verbose
 
       - name: Create GitHub Release
         if: steps.check.outputs.should_release == 'true'
@@ -180,5 +270,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "v${{ steps.version.outputs.version }}" \
+            "PSSAToJunit-${{ steps.version.outputs.version }}.zip#Module Archive" \
             --title "v${{ steps.version.outputs.version }}" \
             --generate-notes
