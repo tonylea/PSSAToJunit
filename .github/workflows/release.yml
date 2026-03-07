@@ -5,7 +5,48 @@ on:
     branches: [main]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    # Skip release commits to prevent infinite loops.
+    # .versionrc.json also includes [skip ci] in the commit message.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Markdown lint
+        run: npx markdownlint-cli2
+
+      - name: Spell check
+        run: npx cspell lint "**"
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -Force
+
+      - name: PowerShell lint
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path ./src -Recurse -Severity Error,Warning
+          if ($results) {
+            $results | Format-Table -AutoSize
+            exit 1
+          }
+
   test:
+    needs: lint
     runs-on: ubuntu-latest
 
     # Skip release commits to prevent infinite loops.
