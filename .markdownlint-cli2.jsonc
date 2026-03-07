@@ -11,6 +11,8 @@
     "**/*.md"
   ],
   "ignores": [
+    "**/.claude/**",
+    "**/.overstory/**",
     "**/CHANGELOG.md",
     "**/TODO.md",
     "**/node_modules/**/*"
