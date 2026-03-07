@@ -65,10 +65,11 @@ After addressing any requested changes, your pull request will be merged.
 
 To set up the development environment for PSSAToJunit, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/your-powershell-module.git`
+1. Clone the repository: `git clone https://github.com/tonylea/PSSAToJunit.git`
 2. Make sure you have PowerShell 7.0 or later installed.
-3. Run `npm install` to install the required dependencies.
-4. Start coding!
+3. Make sure you have Node.js and npm installed.
+4. Run `npm install` to install the required Node.js dependencies.
+5. Start coding!
 
 ## Commit Message Guidelines
 
@@ -77,34 +78,53 @@ Please ensure that your commit messages have a clear and descriptive title and i
 
 ## Testing
 
-PSSAToJunit includes Pester unit tests to maintain code quality and functionality.
+PSSAToJunit uses [Pester](https://pester.dev) for unit and integration tests.
 When contributing, ensure that all existing tests pass and add new tests if necessary.
-To run the tests, execute the appropriate command:
+
+Run all tests locally using the CI script:
 
 ```powershell
-Invoke-Pester
+./scripts/Invoke-LocalCI.ps1 -Stage Test
+```
+
+Or run unit and integration tests individually:
+
+```powershell
+./scripts/Invoke-LocalCI.ps1 -Stage Unit
+./scripts/Invoke-LocalCI.ps1 -Stage Integration
 ```
 
 ## Linting and Spell Checking
 
-We utilize **PSScriptAnalyzer** for linting PowerShell functions and **markdownlint** for linting markdown documents.
-Additionally, we use **markdown-spellcheck** to check the spelling of markdown documentation files.
+We use the following tools to enforce code and documentation quality:
 
-To run the linting and spell checking tasks, execute the following commands:
+- **PSScriptAnalyzer** — lints PowerShell source files
+- **markdownlint** — lints Markdown documents
+- **cspell** — checks spelling across the codebase
+
+Run all lint checks locally:
 
 ```powershell
-Invoke-PSScriptAnalyzer -Path <project_root>/src/*
-markdownlint <markdown-file-or-directory>
-markdown-spellcheck <markdown-file-or-directory>
+./scripts/Invoke-LocalCI.ps1 -Stage Lint
 ```
 
-Make sure all linting and spell checking rules are followed before submitting a pull request.
+Make sure all linting and spell checking rules pass before submitting a pull request.
+
+## Running All Checks Locally
+
+The `scripts/Invoke-LocalCI.ps1` script mirrors the full GitHub Actions pipeline and can be run before pushing to catch issues early:
+
+```powershell
+./scripts/Invoke-LocalCI.ps1
+```
+
+Missing PowerShell modules (`Pester`, `PSScriptAnalyzer`, `BuildHelpers`) are installed automatically if not present.
 
 ## Continuous Integration and Delivery (CI/CD)
 
-The CI/CD process for PSSAToJunit is hosted on Azure DevOps.
-This process includes linting, spell checks, unit tests, package builds, automatic versioning, and publishing to the PowerShell Gallery.
-All changes are automatically validated through these pipelines.
+The CI/CD process for PSSAToJunit runs on GitHub Actions.
+This process includes linting, spell checks, unit tests, integration tests, automatic versioning, and publishing to the PowerShell Gallery.
+All changes are automatically validated through these workflows on push to `main`.
 
 ## License
 
