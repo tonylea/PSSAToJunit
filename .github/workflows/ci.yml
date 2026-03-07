@@ -24,7 +24,9 @@ jobs:
         run: npm ci
 
       - name: Markdown lint
-        run: npx markdownlint-cli2
+        run: |
+          mkdir -p test-results
+          npx markdownlint-cli2
 
       - name: Spell check
         run: npx cspell lint "**"
