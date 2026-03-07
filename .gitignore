@@ -130,6 +130,8 @@ report/
 ScriptAnalyzerResult.xml
 temp-files/
 test-results/
+test-results-*.xml
+code-coverage.xml
 megalinter-reports/
 staging/
 TODO.md
