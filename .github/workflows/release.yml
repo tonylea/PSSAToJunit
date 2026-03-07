@@ -5,10 +5,8 @@ on:
     branches: [main]
 
 jobs:
-  release:
+  test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     # Skip release commits to prevent infinite loops.
     # .versionrc.json also includes [skip ci] in the commit message.
@@ -17,22 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Node.js dependencies
-        run: npm ci
 
       - name: Install PowerShell dependencies
         shell: pwsh
@@ -61,6 +43,32 @@ jobs:
           $config.TestResult.Enabled = $true
           $config.TestResult.OutputPath = './test-results-integration.xml'
           Invoke-Pester -Configuration $config
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: npm ci
 
       - name: Check for releasable commits
         id: check
@@ -107,6 +115,15 @@ jobs:
       - name: Push commit and tag
         if: steps.check.outputs.should_release == 'true'
         run: git push --follow-tags origin main
+
+      - name: Install PowerShell dependencies
+        if: steps.check.outputs.should_release == 'true'
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck
+          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name BuildHelpers -Force
 
       - name: Publish to PowerShell Gallery
         if: steps.check.outputs.should_release == 'true'
