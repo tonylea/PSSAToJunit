@@ -32,21 +32,21 @@
     "projectUri": "https://github.com/tonylea/PSSAToJunit"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.4.3",
-    "@commitlint/config-conventional": "20.4.3",
-    "@secretlint/secretlint-rule-azure": "^11.3.1",
-    "@secretlint/secretlint-rule-pattern": "^11.3.1",
-    "@secretlint/secretlint-rule-preset-recommend": "^11.3.1",
-    "@secretlint/secretlint-rule-privatekey": "^11.3.1",
-    "commit-and-tag-version": "^12.6.1",
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
+    "@secretlint/secretlint-rule-azure": "^11.4.0",
+    "@secretlint/secretlint-rule-pattern": "^11.4.0",
+    "@secretlint/secretlint-rule-preset-recommend": "^11.4.0",
+    "@secretlint/secretlint-rule-privatekey": "^11.4.0",
+    "commit-and-tag-version": "^12.7.1",
     "git-cz": "^4.9.0",
     "husky": "^9.1.7",
     "markdown-link-check": "^3.14.2",
-    "markdownlint-cli2": "^0.21.0",
+    "markdownlint-cli2": "^0.22.0",
     "markdownlint-cli2-formatter-junit": "^0.0.14",
     "mega-linter-runner": "^9.4.0",
-    "npm-check-updates": "^19.6.3",
-    "secretlint": "^11.3.1"
+    "npm-check-updates": "^19.6.6",
+    "secretlint": "^11.4.0"
   },
   "scripts": {
     "prepare": "husky",
